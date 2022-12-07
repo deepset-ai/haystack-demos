@@ -16,17 +16,21 @@ set -o pipefail
 
 if [ -z "$DATA_IMAGE_PLATFORM" ]
 then
-    platform_arg=""
     image_name=$DATA_IMAGE_NAME
+    build_cmd="docker build $DATA_IMAGE_NAME -f Dockerfile.elasticsearch ."
 else
-    platform_arg="--platform $DATA_IMAGE_PLATFORM"
+    # Setup docker driver to build multi-platform images locally, QEMU should be up and running
+    docker buildx rm multi-builder || true
+    docker buildx create --use --name multi-builder --platform $DATA_IMAGE_PLATFORM
+
     # replace any / char with _ in DATA_IMAGE_PLATFORM to use it as Docker tag
     image_name=$DATA_IMAGE_NAME:${DATA_IMAGE_PLATFORM//\//_}
+    build_cmd="docker buildx build -o type=docker -t $image_name --platform $DATA_IMAGE_PLATFORM -f Dockerfile.elasticsearch ."
 fi
 
 # STEP 1: build the empty Elasticsearch container for the target platform
 echo "Building Elasticsearch container..."
-docker buildx build -t $image_name $platform_arg -f Dockerfile.elasticsearch .
+`$build_cmd`
 
 # STEP 2: create a Docker network to let Haystack talk to Elasticsearch. This is what
 # docker-compose does under the hood, but we do it manually in this script. The command
