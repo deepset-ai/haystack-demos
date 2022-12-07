@@ -1,6 +1,12 @@
 version: "3"
 services:
 
+  elasticsearch:
+    image: "deepset/elasticsearch-countries-and-capitals"
+    ports:
+      - 9200:9200
+    restart: on-failure
+
   haystack-api:
     image: "deepset/haystack:gpu"
     # in recent docker-compose version you can enable GPU resources. Make sure to fulfill the prerequisites listed here: https://docs.docker.com/compose/gpu-support/
@@ -16,17 +22,11 @@ services:
     restart: on-failure
     environment:
       - DOCUMENTSTORE_PARAMS_HOST=elasticsearch
-      - PIPELINE_YAML_PATH=/home/user/rest_api/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
-      - CONCURRENT_REQUEST_PER_WORKER
+      - PIPELINE_YAML_PATH=/opt/venv/lib/python3.10/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     command: "/bin/bash -c 'sleep 10 && gunicorn rest_api.application:app -b 0.0.0.0 -k uvicorn.workers.UvicornWorker --workers 1 --timeout 180'"
-
-  elasticsearch:
-    image: "deepset/elasticsearch-countries-and-capitals"
-    ports:
-      - 9200:9200
-    restart: on-failure
 
   ui:
     image: "deepset/demo-explore-the-world"
