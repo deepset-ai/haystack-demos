@@ -61,7 +61,7 @@ done;
 
 # STEP 5: upload all the .txt files in the ./corpus folder
 echo "Uploading dataset..."
-for filename in corpus/3*.txt; do
+for filename in corpus/*.txt; do
     [ -e "$filename" ] || continue
     echo "Uploading $filename..."
     curl -s -X POST -H 'Accept: application/json' -F files="@$PWD/$filename" http://127.0.0.1:8000/file-upload > /dev/null
