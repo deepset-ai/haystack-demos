@@ -78,7 +78,7 @@ docker stop $es_id
 docker stop $hs_id
 
 # STEP 8: push the image to Docker Hub, authentication is needed
-if [ -z "$DATA_IMAGE_PLATFORM" ]
+if [ ! -z "$DATA_IMAGE_PUSH" ]
 then
     echo "Pushing image to Docker Hub..."
     docker push $image_name
