@@ -40,6 +40,7 @@ docker network create explore_the_world || true
 
 # STEP 3: run the Elasticsearch container and wait until it can actually accept connections.
 echo "Running Elasticsearch..."
+docker rm -f elasticsearch
 es_id=`docker run -d --name elasticsearch -p 9200:9200 --network explore_the_world $image_name`
 until [ `docker inspect -f {{.State.Health.Status}} $es_id` = "healthy" ]; do
     echo "Waiting for Elasticsearch to be ready..."
