@@ -1,0 +1,82 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+# Build can be customized using env vars:
+#
+# - DATA_IMAGE_NAME is the name of the Docker image containing the indexed data, it defaults
+#   to deepset/elasticsearch-countries-and-capitals
+# - DATA_IMAGE_PLATFORM is the target platform, defaults to current platform if not set. It must
+#   be a valid string that can be passed to --platform, for example linux/amd64 or linux/arm64
+# - DATA_IMAGE_PUSH if set, image will be pushed to Docker Hub
+#
+
+# STEP 0: initialize config variables
+: "${DATA_IMAGE_NAME:=deepset/elasticsearch-countries-and-capitals}"
+
+if [ -z "$DATA_IMAGE_PLATFORM" ]
+then
+    platform_arg=""
+    image_name=$DATA_IMAGE_NAME
+else
+    platform_arg="--platform $DATA_IMAGE_PLATFORM"
+    # replace any / char with _ in DATA_IMAGE_PLATFORM to use it as Docker tag
+    image_name=$DATA_IMAGE_NAME:${DATA_IMAGE_PLATFORM//\//_}
+fi
+
+# STEP 1: build the empty Elasticsearch container for the target platform
+echo "Building Elasticsearch container..."
+docker buildx build -t $image_name $platform_arg -f Dockerfile.elasticsearch .
+
+# STEP 2: create a Docker network to let Haystack talk to Elasticsearch. This is what
+# docker-compose does under the hood, but we do it manually in this script. The command
+# won't do anything if the network already exists (see the "|| true").
+echo "Creating dedicated network..."
+docker network create explore_the_world || true
+
+# STEP 3: run the Elasticsearch container and wait until it can actually accept connections.
+echo "Running Elasticsearch..."
+es_id=`docker run -d --name elasticsearch -p 9200:9200 --network explore_the_world $image_name`
+until [ `docker inspect -f {{.State.Health.Status}} $es_id` = "healthy" ]; do
+    echo "Waiting for Elasticsearch to be ready..."
+    sleep 2;
+done;
+
+# STEP 4: run Haystack behind the rest_api from the official Docker image and wait for it to be ready
+echo "Running Haystack..."
+# We can use the name of the elasticsearch container as the hostname because on the same Docker network
+export DOCUMENTSTORE_PARAMS_HOST=elasticsearch
+# Select one of the default pipelines
+export PIPELINE_YAML_PATH=/opt/venv/lib/python3.10/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
+hs_id=`docker run -d -p 8000:8000 --network explore_the_world -e "DOCUMENTSTORE_PARAMS_HOST" -e "PIPELINE_YAML_PATH" deepset/haystack:cpu-main`
+until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" != "" ]; do
+    echo "Waiting for Haystack to be ready..."
+    sleep 2;
+done;
+
+# STEP 5: upload all the .txt files in the ./corpus folder
+echo "Uploading dataset..."
+for filename in corpus/*.txt; do
+    [ -e "$filename" ] || continue
+    echo "Uploading $filename..."
+    curl -s -X POST -H 'Accept: application/json' -F files="@$PWD/$filename" http://127.0.0.1:8000/file-upload > /dev/null
+done
+
+# STEP 6: make the changes to the Elasticsearch image persistent so we don't need to re-index the corpus
+# again
+echo "Saving changes to Docker image..."
+docker commit $es_id $image_name
+
+# STEP 7: stop the containers, we're done
+echo "Stopping containers..."
+docker stop $es_id
+docker stop $hs_id
+
+# STEP 8: push the image to Docker Hub, authentication is needed
+if [ -z "$DATA_IMAGE_PLATFORM" ]
+then
+    echo "Pushing image to Docker Hub..."
+    docker push $image_name
+fi
+
+echo "Done"

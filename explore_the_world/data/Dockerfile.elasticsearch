@@ -1,0 +1,6 @@
+FROM elasticsearch:7.17.6
+
+ENV discovery.type="single-node"
+ENV ES_JAVA_OPTS="-Xms1024m -Xmx1024m"
+
+HEALTHCHECK --interval=10s --timeout=1s --retries=10 CMD curl --fail http://localhost:9200/_cat/health || exit 1
