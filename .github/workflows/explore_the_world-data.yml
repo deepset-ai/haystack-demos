@@ -28,6 +28,10 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+      - name: Create driver
+        run: |
+          docker buildx create --use --name multi-builder --platform linux/amd64,linux/arm64
+
       - name: Build and push amd64 image
         working-directory: explore_the_world/data
         env:

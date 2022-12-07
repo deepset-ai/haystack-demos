@@ -19,9 +19,9 @@ then
     image_name=$DATA_IMAGE_NAME
     build_cmd="docker build $DATA_IMAGE_NAME -f Dockerfile.elasticsearch ."
 else
-    # Setup docker driver to build multi-platform images locally, QEMU should be up and running
-    docker buildx rm multi-builder || true
-    docker buildx create --use --name multi-builder --platform $DATA_IMAGE_PLATFORM
+    # If you're building multi-platform images locally, setup docker driver before running this script,
+    # something like:
+    # docker buildx create --use --name multi-builder --platform linux/amd64,linux/arm64
 
     # replace any / char with _ in DATA_IMAGE_PLATFORM to use it as Docker tag
     image_name=$DATA_IMAGE_NAME:${DATA_IMAGE_PLATFORM//\//_}
