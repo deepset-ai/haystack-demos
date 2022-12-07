@@ -1,0 +1,50 @@
+name: explore_the_world-data
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'explore_the_world/data/**'
+
+jobs:
+  build-push:
+    name: Build and Push data image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push amd64 image
+        working-directory: explore_the_world/data
+        env:
+          DATA_IMAGE_PLATFORM: linux/amd64
+          DATA_IMAGE_PUSH: true
+        run: |
+          ./build.sh
+
+      - name: Build and push arm64 image
+        working-directory: explore_the_world/data
+        env:
+          DATA_IMAGE_PLATFORM: linux/arm64
+          DATA_IMAGE_PUSH: true
+        run: |
+          ./build.sh
+
+      - name: Push manifest
+        run: |
+          docker manifest create deepset/elasticsearch-countries-and-capitals:multi deepset/elasticsearch-countries-and-capitals:linux_amd64 deepset/elasticsearch-countries-and-capitals:linux_arm64
+          docker manifest push deepset/elasticsearch-countries-and-capitals:multi
