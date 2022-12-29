@@ -6,14 +6,14 @@ on:
     branches:
       - main
     paths:
-      - 'explore_the_world/data/**'
+      - 'explore_the_world/ui/**'
 
 env:
-  IMAGE_NAME: deepset/elasticsearch-countries-and-capitals
+  IMAGE_NAME: deepset/demo-explore-the-world
 
 jobs:
   build-push:
-    name: Build and Push data image
+    name: Build and Push UI image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,20 +36,14 @@ jobs:
           docker buildx create --use --name multi-builder --platform linux/amd64,linux/arm64
 
       - name: Build and push amd64 image
-        working-directory: explore_the_world/data
-        env:
-          DATA_IMAGE_PLATFORM: linux/amd64
-          DATA_IMAGE_PUSH: true
+        working-directory: explore_the_world
         run: |
-          ./build.sh
+          docker buildx build -o type=docker -t $IMAGE_NAME:linux_amd64 --platform linux/amd64 -f Dockerfile .
 
       - name: Build and push arm64 image
         working-directory: explore_the_world/data
-        env:
-          DATA_IMAGE_PLATFORM: linux/arm64
-          DATA_IMAGE_PUSH: true
         run: |
-          ./build.sh
+          docker buildx build -o type=docker -t $IMAGE_NAME:linux_arm64 --platform linux/arm64 -f Dockerfile .
 
       - name: Push manifest
         run: |
