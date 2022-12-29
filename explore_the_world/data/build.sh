@@ -59,15 +59,15 @@ until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" !
     sleep 2;
 done;
 
-# STEP 5: upload all the .txt files in the ./corpus folder
+# STEP 5: upload all the .txt files in the ./dataset folder
 echo "Uploading dataset..."
-for filename in corpus/*.txt; do
+for filename in dataset/*.txt; do
     [ -e "$filename" ] || continue
     echo "Uploading $filename..."
     curl -s -X POST -H 'Accept: application/json' -F files="@$PWD/$filename" http://127.0.0.1:8000/file-upload > /dev/null
 done
 
-# STEP 6: make the changes to the Elasticsearch image persistent so we don't need to re-index the corpus
+# STEP 6: make the changes to the Elasticsearch image persistent so we don't need to re-index the dataset
 # again
 echo "Saving changes to Docker image..."
 docker commit $es_id $image_name
