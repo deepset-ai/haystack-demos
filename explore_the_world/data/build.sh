@@ -17,7 +17,7 @@ set -o pipefail
 if [ -z "$DATA_IMAGE_PLATFORM" ]
 then
     image_name=$DATA_IMAGE_NAME
-    build_cmd="docker build $DATA_IMAGE_NAME -f Dockerfile.elasticsearch ."
+    build_cmd="docker build -t $DATA_IMAGE_NAME -f Dockerfile.elasticsearch ."
 else
     # If you're building multi-platform images locally, setup docker driver before running this script,
     # something like:
