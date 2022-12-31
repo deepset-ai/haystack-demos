@@ -59,17 +59,30 @@ Elasticsearch image, load your own text data and then use the same Compose file 
 three containers needed. This will require [Docker](https://docs.docker.com/get-docker/) to be
 properly installed on your machine.
 
-First of all, replace all the content in the `./data/corpus` folder with the text files you want to
-query, you can read about how it's better to organize your data in [this section of the Haystack docs](https://docs.haystack.deepset.ai/docs/optimization#document-length)
+The build script supports the following environment variables which you can set for your
+own deployment:
+
+| Var                 | Use                                                                             |
+| ------------------- | ------------------------------------------------------------------------------- |
+| DATA_IMAGE_NAME     | Elastic docker image, default is `deepset/elasticsearch-countries-and-capitals` |
+| DATASET_DIR         | Data/Corpus directory, default is `dataset`                                     |
+| HAYSTACK_IMAGE_NAME | Haystack build image, default is `deepset/haystack:cpu-main`                    |
+| NETWORK             | Docker network name, default is `explore_the_world`                             |
+
+First of all, replace all the content in the `./data/dataset` folder or create a separate directory
+with all of the text files you want to query and specify the `DATASET` directory.
+You can read about how it's better to organize your data in [this section of the Haystack docs](https://docs.haystack.deepset.ai/docs/optimization#document-length)
 
 Once the text files are in place, from the `./data` folder you can just run:
 ```sh
-DATA_IMAGE_NAME=elasticsearch-custom ./build.sh
+DATA_IMAGE_NAME=my-docker-acct/elasticsearch-custom DATASET_DIR=dataset NETWORK=explore_the_world ./build.sh
 ```
 
 This will build a new Docker image locally, pre-filled with your data. The script will start all
 the required services and index the text files one by one; this process might take a while, depending
 on the number and size of your corpus and the overall performance of your computer.
+
+### Running your custom build
 
 Once done, modify the `elasticsearch` section in the `docker-compose.yml` file, changing this line:
 ```yaml

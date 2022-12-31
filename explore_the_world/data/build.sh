@@ -13,6 +13,9 @@ set -o pipefail
 
 # STEP 0: initialize config variables
 : "${DATA_IMAGE_NAME:=deepset/elasticsearch-countries-and-capitals}"
+: "${HAYSTACK_IMAGE_NAME:=deepset/haystack:cpu-main}"
+: "${DATASET_DIR:=dataset}"
+: "${NETWORK:=explore_the_world}"
 
 if [ -z "$DATA_IMAGE_PLATFORM" ]
 then
@@ -29,19 +32,19 @@ else
 fi
 
 # STEP 1: build the empty Elasticsearch container for the target platform
-echo "Building Elasticsearch container..."
-`$build_cmd`
+echo "Building Elasticsearch container: ${build_cmd}"
+$build_cmd
 
 # STEP 2: create a Docker network to let Haystack talk to Elasticsearch. This is what
 # docker-compose does under the hood, but we do it manually in this script. The command
 # won't do anything if the network already exists (see the "|| true").
 echo "Creating dedicated network..."
-docker network create explore_the_world || true
+docker network create ${NETWORK} || true
 
 # STEP 3: run the Elasticsearch container and wait until it can actually accept connections.
 echo "Running Elasticsearch..."
 docker rm -f elasticsearch
-es_id=`docker run -d --name elasticsearch -p 9200:9200 --network explore_the_world $image_name`
+es_id=`docker run -d --name elasticsearch -p 9200:9200 --network ${NETWORK} $image_name`
 until [ `docker inspect -f {{.State.Health.Status}} $es_id` = "healthy" ]; do
     echo "Waiting for Elasticsearch to be ready..."
     sleep 2;
@@ -53,15 +56,17 @@ echo "Running Haystack..."
 export DOCUMENTSTORE_PARAMS_HOST=elasticsearch
 # Select one of the default pipelines
 export PIPELINE_YAML_PATH=/opt/venv/lib/python3.10/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
-hs_id=`docker run -d -p 8000:8000 --network explore_the_world -e "DOCUMENTSTORE_PARAMS_HOST" -e "PIPELINE_YAML_PATH" deepset/haystack:cpu-main`
+echo starting: docker run -d -p 8000:8000 --network ${NETWORK} -e "DOCUMENTSTORE_PARAMS_HOST=${DOCUMENTSTORE_PARAMS_HOST}" -e "PIPELINE_YAML_PATH=${PIPELINE_YAML_PATH}" ${HAYSTACK_IMAGE_NAME}
+hs_id=`docker run -d -p 8000:8000 --network ${NETWORK} -e "DOCUMENTSTORE_PARAMS_HOST=${DOCUMENTSTORE_PARAMS_HOST}" -e "PIPELINE_YAML_PATH=${PIPELINE_YAML_PATH}" ${HAYSTACK_IMAGE_NAME}`
+echo "Running pipeline, to monitor run: docker logs -f ${hs_id}"
 until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" != "" ]; do
     echo "Waiting for Haystack to be ready..."
-    sleep 2;
+    sleep 5;
 done;
 
 # STEP 5: upload all the .txt files in the ./dataset folder
 echo "Uploading dataset..."
-for filename in dataset/*.txt; do
+for filename in ${DATASET_DIR}/*.txt; do
     [ -e "$filename" ] || continue
     echo "Uploading $filename..."
     curl -s -X POST -H 'Accept: application/json' -F files="@$PWD/$filename" http://127.0.0.1:8000/file-upload > /dev/null
