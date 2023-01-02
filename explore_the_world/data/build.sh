@@ -59,6 +59,7 @@ hs_id=`docker run -d -p 8000:8000 --network explore_the_world -e "GUNICORN_CMD_A
 until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" != "" ]; do
     echo "Waiting for Haystack to be ready..."
     sleep 2;
+    docker logs --since=2s $hs_id
 done;
 
 # STEP 5: upload all the .txt files in the ./dataset folder
