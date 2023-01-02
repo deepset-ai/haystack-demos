@@ -56,12 +56,13 @@ echo "Running Haystack..."
 export DOCUMENTSTORE_PARAMS_HOST=elasticsearch
 # Select one of the default pipelines
 export PIPELINE_YAML_PATH=/opt/venv/lib/python3.10/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
-echo starting: docker run -d -p 8000:8000 --network ${NETWORK} -e "DOCUMENTSTORE_PARAMS_HOST=${DOCUMENTSTORE_PARAMS_HOST}" -e "PIPELINE_YAML_PATH=${PIPELINE_YAML_PATH}" ${HAYSTACK_IMAGE_NAME}
+# Increase the timeout to account for the first request that needs more time to setup the models
+export GUNICORN_CMD_ARGS="--timeout=300"
 hs_id=`docker run -d -p 8000:8000 --network ${NETWORK} -e "DOCUMENTSTORE_PARAMS_HOST=${DOCUMENTSTORE_PARAMS_HOST}" -e "PIPELINE_YAML_PATH=${PIPELINE_YAML_PATH}" ${HAYSTACK_IMAGE_NAME}`
-echo "Running pipeline, to monitor run: docker logs -f ${hs_id}"
 until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" != "" ]; do
     echo "Waiting for Haystack to be ready..."
     sleep 5;
+    docker logs --since=2s $hs_id
 done;
 
 # STEP 5: upload all the .txt files in the ./dataset folder
