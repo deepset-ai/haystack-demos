@@ -53,7 +53,9 @@ echo "Running Haystack..."
 export DOCUMENTSTORE_PARAMS_HOST=elasticsearch
 # Select one of the default pipelines
 export PIPELINE_YAML_PATH=/opt/venv/lib/python3.10/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
-hs_id=`docker run -d -p 8000:8000 --network explore_the_world -e "DOCUMENTSTORE_PARAMS_HOST" -e "PIPELINE_YAML_PATH" deepset/haystack:cpu-main`
+# Add a graceful timeout to account for the first request that needs more time to setup the models
+export GUNICORN_CMD_ARGS="--graceful_timeout 300"
+hs_id=`docker run -d -p 8000:8000 --network explore_the_world -e "GUNICORN_CMD_ARGS" -e "DOCUMENTSTORE_PARAMS_HOST" -e "PIPELINE_YAML_PATH" deepset/haystack:cpu-main`
 until [ "`curl -s --fail --max-time 1 http://localhost:8000/health || exit 0`" != "" ]; do
     echo "Waiting for Haystack to be ready..."
     sleep 2;
