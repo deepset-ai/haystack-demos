@@ -25,13 +25,13 @@ jobs:
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ secrets.DEMO_AWS_DEPLOY_ROLE }}
+          role-to-assume: ${{ secrets.EXPLORE_THE_W_AWS_DEPLOY_ROLE }}
 
       - name: Deploy demo
         env:
-          CF_KEY_NAME: ${{ secrets.DEMO_CF_KEY_NAME }}
-          CF_IMAGE_ID: ${{ secrets.DEMO_CF_IMAGE_ID }}
-          CF_IAM_INSTANCE_PROFILE: ${{ secrets.DEMO_CF_IAM_INSTANCE_PROFILE }}
+          CF_KEY_NAME: ${{ secrets.EXPLORE_THE_W_CF_KEY_NAME }}
+          CF_IMAGE_ID: ${{ secrets.EXPLORE_THE_W_CF_IMAGE_ID }}
+          CF_IAM_INSTANCE_PROFILE: ${{ secrets.EXPLORE_THE_W_CF_IAM_INSTANCE_PROFILE }}
         run: |
           echo -e "\n* Deploying CloudFormation Stack ${STACK_NAME}"
 
@@ -82,6 +82,6 @@ jobs:
           LogGroupURL="https://${AWS_REGION}.console.aws.amazon.com/cloudwatch/home?region=${AWS_REGION}#logsV2:log-groups/log-group/$(echo ${LogGroupName} | sed 's#/#$252F#g')"
           echo -e "\n* EC2 instance CloudWatch logs can be found at ${LogGroupURL}"
 
-          # wait will exit whith the same exit code as the background deploy process
+          # wait will exit with the same exit code as the background deploy process
           # so we pass or fail the CI job based on the result of the deployment
           wait $deploy_pid
