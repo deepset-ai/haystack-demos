@@ -1,4 +1,4 @@
-name: explore_the_world-data
+name: explore_the_world
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'explore_the_world/ui/**'
+      - 'explore_the_world/ui/*'
 
 env:
   IMAGE_NAME: deepset/demo-explore-the-world
@@ -41,7 +41,7 @@ jobs:
           docker buildx build -o type=docker -t $IMAGE_NAME:linux_amd64 --platform linux/amd64 -f Dockerfile .
 
       - name: Build and push arm64 image
-        working-directory: explore_the_world/data
+        working-directory: explore_the_world
         run: |
           docker buildx build -o type=docker -t $IMAGE_NAME:linux_arm64 --platform linux/arm64 -f Dockerfile .
 
