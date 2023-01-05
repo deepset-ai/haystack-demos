@@ -38,12 +38,12 @@ jobs:
       - name: Build and push amd64 image
         working-directory: explore_the_world
         run: |
-          docker buildx build -o type=docker -t $IMAGE_NAME:linux_amd64 --platform linux/amd64 -f Dockerfile .
+          docker buildx build --push -o type=docker -t $IMAGE_NAME:linux_amd64 --platform linux/amd64 -f Dockerfile .
 
       - name: Build and push arm64 image
         working-directory: explore_the_world
         run: |
-          docker buildx build -o type=docker -t $IMAGE_NAME:linux_arm64 --platform linux/arm64 -f Dockerfile .
+          docker buildx build --push -o type=docker -t $IMAGE_NAME:linux_arm64 --platform linux/arm64 -f Dockerfile .
 
       - name: Push manifest
         run: |
