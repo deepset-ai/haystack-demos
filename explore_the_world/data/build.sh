@@ -73,15 +73,15 @@ for filename in ${DATASET_DIR}/*.txt; do
     curl -s -X POST -H 'Accept: application/json' -F files="@$PWD/$filename" http://127.0.0.1:8000/file-upload > /dev/null
 done
 
-# STEP 6: make the changes to the Elasticsearch image persistent so we don't need to re-index the dataset
-# again
-echo "Saving changes to Docker image..."
-docker commit $es_id $image_name
-
-# STEP 7: stop the containers, we're done
+# STEP 6: stop the containers, we're done
 echo "Stopping containers..."
 docker stop $es_id
 docker stop $hs_id
+
+# STEP 7: make the changes to the Elasticsearch image persistent so we don't need to re-index the dataset
+# again
+echo "Saving changes to Docker image..."
+docker commit $es_id $image_name
 
 # STEP 8: push the image to Docker Hub, authentication is needed
 if [ ! -z "$DATA_IMAGE_PUSH" ]
