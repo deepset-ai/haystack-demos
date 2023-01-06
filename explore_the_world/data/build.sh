@@ -47,7 +47,7 @@ docker rm -f elasticsearch
 es_id=`docker run -d --name elasticsearch -p 9200:9200 --network ${NETWORK} $image_name`
 until [ `docker inspect -f {{.State.Health.Status}} $es_id` = "healthy" ]; do
     echo "Waiting for Elasticsearch to be ready..."
-    sleep 2;
+    sleep 5;
 done;
 
 # STEP 4: run Haystack behind the rest_api from the official Docker image and wait for it to be ready
@@ -80,14 +80,16 @@ docker stop $hs_id
 
 # STEP 7: make the changes to the Elasticsearch image persistent so we don't need to re-index the dataset
 # again
-echo "Saving changes to Docker image..."
+echo "Saving changes to a new Docker image $DATA_IMAGE_NAME:saved..."
 docker commit $es_id $DATA_IMAGE_NAME:saved
+echo "Tagging $DATA_IMAGE_NAME:saved as $image_name..."
 docker tag $DATA_IMAGE_NAME:saved $image_name
+docker image ls
 
 # STEP 8: push the image to Docker Hub, authentication is needed
 if [ ! -z "$DATA_IMAGE_PUSH" ]
 then
-    echo "Pushing image to Docker Hub..."
+    echo "Pushing $image_name to Docker Hub..."
     docker push $image_name
 fi
 
