@@ -41,6 +41,7 @@ jobs:
         env:
           DATA_IMAGE_PLATFORM: linux/amd64
           DATA_IMAGE_PUSH: true
+          HAYSTACK_IMAGE_NAME: deepset/haystack:cpu-v1.11.1
         run: |
           ./build.sh
 
@@ -49,6 +50,7 @@ jobs:
         env:
           DATA_IMAGE_PLATFORM: linux/arm64
           DATA_IMAGE_PUSH: true
+          HAYSTACK_IMAGE_NAME: deepset/haystack:cpu-v1.11.1
         run: |
           ./build.sh
 

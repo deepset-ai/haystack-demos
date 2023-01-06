@@ -81,7 +81,7 @@ docker stop $hs_id
 # STEP 7: make the changes to the Elasticsearch image persistent so we don't need to re-index the dataset
 # again
 echo "Saving changes to a new Docker image..."
-docker commit $image_name
+docker commit $es_id $image_name
 docker image ls --digests
 
 # STEP 8: push the image to Docker Hub, authentication is needed
