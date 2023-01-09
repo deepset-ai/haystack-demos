@@ -1,0 +1,13 @@
+components:
+  - name: Reader
+    params:
+      model_name_or_path: deepset/minilm-uncased-squad2
+      use_gpu: false
+    type: FARMReader
+pipelines:
+  - name: query
+    nodes:
+      - inputs:
+          - Query
+        name: Reader
+version: 1.12.2
