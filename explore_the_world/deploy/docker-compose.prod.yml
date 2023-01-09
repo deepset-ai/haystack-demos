@@ -15,6 +15,7 @@ services:
     environment:
       CONCURRENT_REQUEST_PER_WORKER: 16
       HAYSTACK_EXECUTION_CONTEXT: "public_demo"
+      PIPELINE_YAML_PATH: /opt/venv/lib/python3.7/site-packages/rest_api/pipeline/pipelines_dpr.haystack-pipeline.yml
 
   elasticsearch:
     restart: always
