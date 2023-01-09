@@ -3,7 +3,7 @@ version: "3"
 
 services:
   haystack-api:
-    image: "deepset/haystack:gpu"
+    image: "deepset/haystack:gpu-v1.12.2"
     deploy:
       resources:
         reservations:
