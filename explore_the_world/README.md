@@ -92,7 +92,7 @@ Once done, modify the `elasticsearch` section in the `docker-compose.yml` file, 
 to:
 
 ```yaml
- image: "elasticsearch-custom"
+ image: "my-docker-acct/elasticsearch-custom"
 ```
 
 Finally, run the compose file as usual:
