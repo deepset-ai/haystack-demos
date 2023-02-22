@@ -130,8 +130,8 @@ Ask any question on this topic and see if Haystack can find the correct answer t
     </style>
     <div class="haystack-footer">
         <hr />
-        <h4>Built with <a href="https://www.deepset.ai/haystack">Haystack</a>{hs_version}</h4>
-        <p>Get it on <a href="https://github.com/deepset-ai/haystack/">GitHub</a> &nbsp;&nbsp; - &nbsp;&nbsp; Read the <a href="https://haystack.deepset.ai/overview/intro">Docs</a></p>
+        <h4>Built with <a href="https://haystack.deepset.ai/">Haystack</a>{hs_version}</h4>
+        <p>Get it on <a href="https://github.com/deepset-ai/haystack/">GitHub</a> &nbsp;&nbsp; - &nbsp;&nbsp; Read the <a href="https://docs.haystack.deepset.ai/docs">Docs</a></p>
         <small>Data crawled from <a href="https://en.wikipedia.org/wiki/Category:Lists_of_countries_by_continent">Wikipedia</a> in November 2021.<br />See the <a href="https://creativecommons.org/licenses/by-sa/3.0/">License</a> (CC BY-SA 3.0).</small>
     </div>
     """,
