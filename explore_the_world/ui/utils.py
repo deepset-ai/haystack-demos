@@ -32,7 +32,6 @@ def haystack_is_ready():
     return False
 
 
-@st.cache
 def haystack_version():
     """
     Get the Haystack version from the REST API
