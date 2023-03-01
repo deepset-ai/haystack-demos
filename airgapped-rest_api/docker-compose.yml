@@ -1,0 +1,47 @@
+version: "3"
+services:
+
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.9.2"
+    ports:
+      - 9200:9200
+    restart: on-failure
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    healthcheck:
+      test: curl --fail http://localhost:9200/_cat/health || exit 1
+      interval: 10s
+      timeout: 1s
+      retries: 10
+
+  haystack-airgapped:
+    image: haystack_airgapped
+    build:
+      context: ../../haystack-demos
+      args:
+        HAYSTACK_BASE_IMAGE: deepset/haystack:cpu-v1.14.0
+        # In case you want to download, please add the token in the line below.
+        # You will also need to change the Dockerfile accordingly, for more details see Dockerfile.
+        # hf_token=''
+        hf_model_names: "['sentence-transformers/all-MiniLM-L6-v2']"
+
+        # If you are using local models to build the image, remember to set the `context` correctly
+        # or move your models to `haystack-demos` folder before you use the below variables
+        local_model_path: local_farm_minilm
+        container_model_path: /opt/models/fine-tuned-reader
+
+        local_pipeline_path: airgapped-rest_api/retriever_reader.yml
+        container_pipeline_path: /opt/haystack_pipelines/reader_retriever.yml
+
+      dockerfile: airgapped-rest_api/Dockerfile
+    ports:
+      - 8000:8000
+    restart: on-failure
+    environment:
+      - DOCUMENTSTORE_PARAMS_HOST=elasticsearch
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    command: "/bin/bash -c 'gunicorn rest_api.application:app -b 0.0.0.0 -k uvicorn.workers.UvicornWorker --workers 1 --timeout 180'"
+

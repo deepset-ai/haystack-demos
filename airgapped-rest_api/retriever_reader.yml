@@ -1,0 +1,34 @@
+components:
+  - name: DocumentStore
+    type: ElasticsearchDocumentStore
+  - name: Retriever
+    params:
+      document_store: DocumentStore
+    type: TfidfRetriever
+  - name: reader
+    params:
+      # set model_name_or_path to reflect local model_path or HF model_name
+      model_name_or_path: /opt/models/fine-tuned-reader
+      # here we have used a base-cpu image
+      use_gpu: false
+      # for airgapped image, we should load models from local
+      local_files_only: true
+    type: FARMReader
+  - name: TextFileConverter
+    type: TextConverter
+pipelines:
+  - name: query
+    nodes:
+      - inputs: [Query]
+        name: Retriever
+      - inputs: [Retriever]
+        name: reader
+  - name: indexing
+    nodes:
+      - name: TextFileConverter
+        inputs: [ File ]
+      - name: Retriever
+        inputs: [ TextFileConverter ]
+      - name: DocumentStore
+        inputs: [ Retriever ]
+version: ignore
