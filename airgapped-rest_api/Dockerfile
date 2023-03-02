@@ -1,32 +1,32 @@
 # NOTE: This is a sample dockerfile for creating airgapped docker images for deploying
-#       a haystack pipeline. Follow the comments and make suitable changes for your use-case.
+#       a Haystack pipeline. Follow the comments and make suitable changes for your use-case.
 #
 # Use-case showcased here:
-#       Air-gapped dockerfile for a Reader-Retriever pipeline
+#       Air-gapped Dockerfile for a Reader-Retriever pipeline.
 #
-# The reader is a custom trained model locally available FARM Model.
-# Retriever is a simple TF-IDF retriever.
+# The reader is a custom trained locally available FARM Model.
+# The retriever is a simple TF-IDF retriever.
 #
 # We also show how to cache HuggingFace models; both public and private. More details in the comments.
-# CAUTION: Do not use `huggingface-cli login` inside the docker as it store the access token locally
-#          Here we prefer passing access token as an `ARG` because,
+# CAUTION: Do not use `huggingface-cli login` inside the docker as it store the access token locally.
+#          Here we prefer passing access token as an `ARG` because
 #          we only need to use access token to cache required model.
-#          Also, Do not create an ENV variable containing access token,
+#          Also, do not create an ENV variable containing access token,
 #          as ENV variable remains active inside docker for its entire lifecycle.
-#          To know futher: https://huggingface.co/docs/hub/security-tokens#best-practices
+#          To know further: https://huggingface.co/docs/hub/security-tokens#best-practices
 
-# Choose appropriate Haystack base image (i.e. v1.14.0)
+# Choose appropriate Haystack base image (e.g. v1.14.0)
 ARG HAYSTACK_BASE_IMAGE
 FROM $HAYSTACK_BASE_IMAGE
 
 # Haystack collects anonymous usage statistics for improvement purposes
 # In this case your docker won't have access to the internet, so let's disable sending
-# the usage statistics to haystack
+# the usage statistics to Haystack.
 ENV HAYSTACK_TELEMETRY_ENABLED=False
 
 ARG hf_model_names
-# `hf_model_names` should be a list of string containing model names from HuggingFace hub
-# i.e., "['hf/model1']"        or        "['hf/model1', 'hf/model2', 'hf/model3']"
+# `hf_model_names` should be a list of strings containing model names from HuggingFace hub
+# e.g., "['hf/model1']"        or        "['hf/model1', 'hf/model2', 'hf/model3']"
 
 #ARG hf_token=''
 

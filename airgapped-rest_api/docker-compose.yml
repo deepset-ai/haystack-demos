@@ -21,7 +21,7 @@ services:
       context: ../../haystack-demos
       args:
         HAYSTACK_BASE_IMAGE: deepset/haystack:cpu-v1.14.0
-        # In case you want to download, please add the token in the line below.
+        # In case you want to download private models, please add the token in the line below.
         # You will also need to change the Dockerfile accordingly, for more details see Dockerfile.
         # hf_token=''
         hf_model_names: "['sentence-transformers/all-MiniLM-L6-v2']"

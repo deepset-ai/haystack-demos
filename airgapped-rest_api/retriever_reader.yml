@@ -5,7 +5,7 @@ components:
     params:
       document_store: DocumentStore
     type: TfidfRetriever
-  - name: reader
+  - name: Reader
     params:
       # set model_name_or_path to reflect local model_path or HF model_name
       model_name_or_path: /opt/models/fine-tuned-reader
@@ -22,13 +22,13 @@ pipelines:
       - inputs: [Query]
         name: Retriever
       - inputs: [Retriever]
-        name: reader
+        name: Reader
   - name: indexing
     nodes:
       - name: TextFileConverter
-        inputs: [ File ]
+        inputs: [File]
       - name: Retriever
-        inputs: [ TextFileConverter ]
+        inputs: [TextFileConverter]
       - name: DocumentStore
-        inputs: [ Retriever ]
+        inputs: [Retriever]
 version: ignore

@@ -8,7 +8,7 @@ This folder contains a Dockerfile and a minimal pipeline setup to showcase an ex
 
 ### Docker build process:
 
-To build the Dockerfile, you need [`docker compose`](https://docs.docker.com/compose/install/) installed on your system or You can build the `Dockerfile` using the alternate process.
+To build the Dockerfile, you need [`docker compose`](https://docs.docker.com/compose/install/) installed on your system or you can build the `Dockerfile` using the alternate process.
 
 You’ll also need to clone the `haystack-demos` repository and run the following commands.
 
@@ -22,13 +22,13 @@ Uncomment the last line in the Dockerfile and use the following commands. Pass t
 
 `docker build -t haystack_airgapped -f airgapped-rest_api/Dockerfile .`
 
-After building the Docker image, it should be possible to run the docker without internet access.
+After building the Docker image, it should be possible to run the container without internet access.
 
 ### Docker run command:
 
 `docker compose up`
 
-If you have built the docker using the alternate process: `docker run -it --rm haystack_airgapped`
+If you have built the container using the alternate process: `docker run -it --rm haystack_airgapped`
 
 ### Sending requests to Docker:
 
@@ -43,16 +43,16 @@ You will need to replace the IP address in the commands below.
 To index the test data through REST APIs:
 
 ```bash
-find ./airgapped-test-data -name '*.txt' -exec curl --request POST --url [http://<IPAddress>:8000/file-upload](http://172.17.0.2:8000/file-upload) --header 'accept: application/json' --header 'content-type: multipart/form-data' --form files="@{}" --form meta=null \;
+find ./airgapped-test-data -name '*.txt' -exec curl --request POST --url http://<IPAddress>:8000/file-upload --header 'accept: application/json' --header 'content-type: multipart/form-data' --form files="@{}" --form meta=null \;
 ```
 
 To verify if the data is written in the DocumentStore:
 
 ```bash
-curl --request POST --url [http://<IPAddress>](http://172.17.0.2:8000/file-upload)[:8000/documents/get_by_filters](http://172.17.0.3:8000/documents/get_by_filters) --header 'accept: application/json' --header 'content-type: application/json' --data '{"filters": {}}'
+curl --request POST --url http://<IPAddress>:8000/documents/get_by_filters --header 'accept: application/json' --header 'content-type: application/json' --data '{"filters": {}}'
 ```
 
 Sample Query through REST API:
 ```bash
-curl --request POST --url [http://<IPAddress>:](http://172.17.0.2:8000/file-upload)[8000/query](http://172.17.0.3:8000/query) --header 'accept: application/json' --header 'content-type: application/json' --data '{"query": "what is my name?"}' 
+curl --request POST --url http://<IPAddress>:8000/query --header 'accept: application/json' --header 'content-type: application/json' --data '{"query": "what is my name?"}' 
 ```
