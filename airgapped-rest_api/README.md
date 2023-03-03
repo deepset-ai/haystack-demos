@@ -2,9 +2,9 @@ This folder contains a Dockerfile and a minimal pipeline setup to showcase an ex
 
 ### Important points to note:
 
-1. To build the container, you still need internet access.
-2. The more and larger models you add to Docker, the larger its size will become.
-3. This is just a sample Dockerfile provided for your reference. Feel free to modify it to suit your specific use case.
+1. While the container can run in an air-gapped environment, Internet access is required to build the container itself.
+2. The number and size of the models used in the pipeline will increase the size of the resulting Docker image.
+3. This is an overly simplistic Dockerfile provided for reference, some changes are expected to suit realistic use cases.
 
 ### Docker build process:
 
