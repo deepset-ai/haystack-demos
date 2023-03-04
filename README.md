@@ -18,6 +18,7 @@ cases: some of these applications are available online and all of them can run l
 
 ## Demo apps
 
-| Name                                      | Use case           | Available online                         |
-| ----------------------------------------- | ------------------ | ---------------------------------------- |
-| [Explore the world](./explore_the_world/) | Question Answering | [Link](https://haystack-demo.deepset.ai) |
+| Name                                        | Use case           | Available online                         |
+| ------------------------------------------- | ------------------ | ---------------------------------------- |
+| [Explore the world](./explore_the_world/)   | Question Answering | [Link](https://haystack-demo.deepset.ai) |
+| [Air-gapped rest_api](./airgapped-rest_api) | Deployment         | :x:                                      |
