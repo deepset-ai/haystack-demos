@@ -6,6 +6,13 @@ services:
     ports:
       - 9200:9200
     restart: on-failure
+    # Uncomment the healthcheck section on Apple M1, as on M1 elasticsearch might need longer to start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cat/health"]
+      interval: 10s
+      timeout: 1s
+      retries: 30
+      start_period: "30s"
 
   haystack-api:
     image: "deepset/haystack:cpu-v1.14.0"
