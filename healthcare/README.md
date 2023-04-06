@@ -1,4 +1,4 @@
-## Explore the World
+## Question Answering Application for Healthcare
 
 This is a streamlit-based NLP application powering a question answering demo on healthcare data. It's easy to change and extend and can be used to try out Haystack's capabilities.
 
