@@ -1,0 +1,75 @@
+version: ignore
+
+components:
+  - name: DocumentStore
+    type: ElasticsearchDocumentStore
+    params:
+      host: localhost
+  - name: Retriever # Selects the most relevant documents from the document store and passes them on to the Reader
+    type: EmbeddingRetriever # Uses a Transformer model to encode the document and the query
+    params:
+      document_store: DocumentStore
+      embedding_model: sentence-transformers/multi-qa-mpnet-base-dot-v1 # multi-qa-MiniLM-L6-dot-v1
+      embed_meta_fields:
+        - filename
+      top_k: 10 # The number of results to return
+  - name: BM25
+    type: BM25Retriever
+    params:
+      document_store: DocumentStore
+      top_k: 10
+      
+  - name: Joiner
+    type: JoinDocuments
+    params:
+      join_mode: reciprocal_rank_fusion
+  - name: Reader # The component that actually fetches answers from among the 20 documents returned by retriever 
+    type: FARMReader # Transformer-based reader, specializes in extractive QA
+    params:
+      model_name_or_path: dmis-lab/biobert-large-cased-v1.1-squad # dmis-lab/biobert-base-cased-v1.1-squad
+      context_window_size: 700 # The size of the window around the answer span
+  - name: FileTypeClassifier # Routes files based on their extension to appropriate converters, by default txt, pdf, md, docx, html
+    type: FileTypeClassifier
+  - name: TextConverter # Converts files into documents
+    type: TextConverter
+  - name: PDFConverter # Converts PDFs into documents
+    type: PDFToTextConverter
+  - name: Preprocessor # Splits documents into smaller ones and cleans them up
+    type: PreProcessor
+    params:
+      # With a vector-based retriever, it's good to split your documents into smaller ones
+      split_by: word # The unit by which you want to split the documents
+      split_length: 250 # The max number of words in a document
+      split_overlap: 20 # Enables the sliding window approach
+      split_respect_sentence_boundary: True # Retains complete sentences in split documents
+      language: en # Used by NLTK to best detect the sentence boundaries for that language
+
+
+# Here you define how the nodes are organized in the pipelines
+# For each node, specify its input
+pipelines:
+  - name: query
+    nodes:
+      - name: Retriever
+        inputs: [Query]
+      - name: BM25
+        inputs: [Query]
+      - name: Joiner
+        inputs: [Retriever, BM25]
+      - name: Reader
+        inputs: [Joiner]
+  - name: indexing
+    nodes:
+    # Depending on the file type, we use a Text or PDF converter
+      - name: FileTypeClassifier
+        inputs: [File]
+      - name: TextConverter
+        inputs: [FileTypeClassifier.output_1] # Ensures this converter receives TXT files
+      - name: PDFConverter
+        inputs: [FileTypeClassifier.output_2] # Ensures this converter receives PDFs
+      - name: Preprocessor
+        inputs: [TextConverter, PDFConverter]
+      - name: Retriever
+        inputs: [Preprocessor]
+      - name: DocumentStore
+        inputs: [Retriever]

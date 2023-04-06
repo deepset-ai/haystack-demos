@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  elasticsearch:
+    image: "julianrisch/elasticsearch-healthcare"
+    ports:
+      - 9200:9200
+    restart: on-failure
+    # Uncomment the healthcheck section on Apple M1, as on M1 elasticsearch might need longer to start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cat/health"]
+      interval: 10s
+      timeout: 1s
+      retries: 30
+      start_period: "30s"
+
+  haystack-api:
+    image: "deepset/haystack:cpu-v1.14.0"
+    ports:
+      - 8000:8000
+    restart: on-failure
+    volumes:
+      - ./haystack-api:/home/node/app
+    environment:
+      - DOCUMENTSTORE_PARAMS_HOST=elasticsearch
+      - PIPELINE_YAML_PATH=/home/node/app/pipelines_biobert.haystack-pipeline.yml
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  ui:
+    image: "julianrisch/demo-healthcare"
+    ports:
+      - 8501:8501
+    restart: on-failure
+    environment:
+      - API_ENDPOINT=http://haystack-api:8000
+      # The value fot the following variables will be read from the host, if present.
+      # They can also be temporarily set for docker-compose, for example:
+      # $ DISABLE_FILE_UPLOAD=1 DEFAULT_DOCS_FROM_RETRIEVER=5 docker-compose up
+      - DEFAULT_QUESTION_AT_STARTUP
+      - DEFAULT_DOCS_FROM_RETRIEVER
+      - DEFAULT_NUMBER_OF_ANSWERS
+    command: "/bin/bash -c 'sleep 15 && python -m streamlit run ui/webapp.py'"
