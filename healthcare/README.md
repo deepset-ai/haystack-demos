@@ -21,6 +21,9 @@ Docker will start three containers:
 Once all the containers are up and running, you can open the user interface pointing your
 browser to [http://localhost:8501](http://localhost:8501).
 
+## Screencast
+https://user-images.githubusercontent.com/4181769/231965471-48d581a2-e1aa-4316-b3a4-990d9c86800e.mov
+
 ## Evaluation Mode
 
 The evaluation mode leverages the feedback REST API endpoint of haystack. The user has the options
