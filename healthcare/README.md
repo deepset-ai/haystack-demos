@@ -95,7 +95,7 @@ streamlit run ui/webapp.py
 
 ## Using GPUs with Docker
 
-Assuming you have nvidia drivers installed on your machine, you can configure docker to use the GPU for the Haystack API container to speed it up.
+Assuming you have [nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) on your machine, you can configure docker to use the GPU for the Haystack API container to speed it up.
 First, configure the nvidia repository as described here: https://nvidia.github.io/nvidia-container-runtime/. For example:
 ```sh
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
