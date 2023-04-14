@@ -10,7 +10,7 @@ The easiest way to run the application is through [Docker compose](https://docs.
 From this folder, just run:
 
 ```sh
-docker-compose up -d
+docker compose up -d
 ```
 
 Docker will start three containers:
@@ -91,4 +91,46 @@ At this point you should be able to make changes and run the streamlit applicati
 
 ```
 streamlit run ui/webapp.py
+```
+
+## Using GPUs with Docker
+
+Assuming you have nvidia drivers installed on your machine, you can configure docker to use the GPU for the Haystack API container to speed it up.
+First, configure the nvidia repository as described here: https://nvidia.github.io/nvidia-container-runtime/. For example:
+```sh
+curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
+  sudo apt-key add -
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
+sudo apt-get update
+```
+Then, install nvidia-container-runtime as described here: https://docs.docker.com/config/containers/resource_constraints/#access-an-nvidia-gpu.
+For example:
+```sh
+sudo apt-get install nvidia-container-runtime
+```
+Restart the Docker daemon (or simply the machine).
+Finally, you can change the docker compose file `healthcare/docker-compose.yml` so that a docker image prepared for usage with GPUs is used and one GPU is reserved for the Haystack API container:
+```yaml
+  haystack-api:
+    image: "deepset/haystack:gpu-v1.14.0"
+    ports:
+      - 8000:8000
+    restart: on-failure
+    volumes:
+      - ./haystack-api:/home/node/app
+    environment:
+      - DOCUMENTSTORE_PARAMS_HOST=elasticsearch
+      - PIPELINE_YAML_PATH=/home/node/app/pipelines_biobert.haystack-pipeline.yml
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 ```
