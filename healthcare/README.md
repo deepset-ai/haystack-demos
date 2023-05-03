@@ -2,7 +2,7 @@
 
 This is a streamlit-based NLP application powering a question answering demo on healthcare data. It's easy to change and extend and can be used to try out Haystack's capabilities.
 
-To get started with Haystack please visit the [README](https://github.com/deepset-ai/haystack/tree/main#key-components) or check out our [tutorials](https://haystack.deepset.ai/tutorials/first-qa-system).
+A video presentation of this demo is available on [YouTube](https://www.youtube.com/watch?v=pOnkGdOvYfo). To get started with Haystack please visit the [README](https://github.com/deepset-ai/haystack/tree/main#key-components) or check out our [tutorials](https://haystack.deepset.ai/tutorials/first-qa-system).
 
 ## Usage
 
