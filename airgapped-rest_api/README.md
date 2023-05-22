@@ -13,7 +13,7 @@ For the example here, you need [`docker compose`](https://docs.docker.com/compos
 You’ll also need to clone the `haystack-demos` repository and run the following commands.
 
 1. Read the `docker-compose.yml` , `Dockerfile` , and `retriever-reader.yml` files carefully.
-2. Make appropriate changes such as choose the required pipeline/component, add/remove unnecessary commands from `Dockerfile`.
+2. Make any appropriate change: choose the desired pipeline and components, add or remove unnecessary commands from the `Dockerfile`.
 3. `cd haystack-demos/airgapped-rest_api`
 4. `docker compose build`
 
