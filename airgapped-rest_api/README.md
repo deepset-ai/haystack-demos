@@ -8,27 +8,20 @@ This folder contains a Dockerfile and a minimal pipeline setup to showcase an ex
 
 ### Docker build process:
 
-To build the Dockerfile, you need [`docker compose`](https://docs.docker.com/compose/install/) installed on your system or you can build the `Dockerfile` using the alternate process.
+For the example here, you need [`docker compose`](https://docs.docker.com/compose/install/) installed on your system.
 
 You’ll also need to clone the `haystack-demos` repository and run the following commands.
 
-1. Read the `docker-compose.yml` , `Dockerfile` , and `retriever-reader.yml` files carefully and make appropriate changes.
-2. `cd haystack-demos/airgapped-rest_api`
-3. `docker compose build`
-
-### Alternative build process:
-
-Uncomment the last line in the Dockerfile and use the following commands. Pass the required arguments using `build-args`.
-
-`docker build -t haystack_airgapped -f airgapped-rest_api/Dockerfile .`
+1. Read the `docker-compose.yml` , `Dockerfile` , and `retriever-reader.yml` files carefully.
+2. Make appropriate changes such as choose the required pipeline/component, add/remove unnecessary commands from `Dockerfile`.
+3. `cd haystack-demos/airgapped-rest_api`
+4. `docker compose build`
 
 After building the Docker image, it should be possible to run the container without internet access.
 
 ### Docker run command:
 
 `docker compose up`
-
-If you have built the container using the alternate process: `docker run -it --rm haystack_airgapped`
 
 ### Sending requests to Docker:
 
