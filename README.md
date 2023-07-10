@@ -23,4 +23,4 @@ cases: some of these applications are available online and all of them can run l
 | [Explore the world](./explore_the_world/)   | Question Answering | [Link](https://haystack-demo.deepset.ai) |
 | [Air-gapped rest_api](./airgapped-rest_api) | Deployment         | :x:                                      |
 | [Healthcare](./healthcare)                  | Question Answering | :x:                                      |
-| [What Would Mother Say - Tweet Customizer]  | Content Generation | [Link](https://huggingface.co/spaces/Tuana/what-would-mother-say) |
+| [What Would Mother Say - Tweet Customizer](https://github.com/TuanaCelik/what-would-mother-say)  | Content Generation | [Link](https://huggingface.co/spaces/Tuana/what-would-mother-say) |
