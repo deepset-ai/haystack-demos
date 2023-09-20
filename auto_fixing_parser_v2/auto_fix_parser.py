@@ -77,12 +77,20 @@ class InputSwitch():
 
 prompt_template = """
  {{query}}
+ ##
+ Passage:
+ {{passage}}
+ ##
  Schema:
  {{schema}}
 """
 
 prompt_template_correction = """
 {{query}}
+##
+Passage:
+{{passage}}
+##
 Schema:
 {{schema}}
 We already got the following output: {{replies}}
@@ -112,10 +120,16 @@ pipeline.connect("prompt_correction", "input_switch.prompt2")
 
 ## Run the Pipeline
 query = (
-    "Create a json file of the 3 biggest cities in the world with the following fields: name, country, and population. None of the fields must be empty.")
+    "Create a json file with the following fields extracted from the supplied passage: name, country, and population. None of the fields must be empty."
+)
+
+passage = "Berlin is the capital of Germany. It has a population of 3,850,809"
+# passage = "Berlin is the capital of Germany."
+
+
 result = pipeline.run({
-    "prompt_builder": {"query": query, "schema": schema},
-    "prompt_correction": {"query": query, "schema": schema},
+    "prompt_builder": {"query": query, "schema": schema, "passage": passage},
+    "prompt_correction": {"query": query, "schema": schema, "passage": passage},
 })
 
 print(result)
