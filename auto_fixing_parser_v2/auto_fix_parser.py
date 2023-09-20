@@ -43,6 +43,9 @@ class OutputParser():
     def run(
             self,
             replies: List[str]):
+        with open("/Users/bijaygurung/work/haystack-demos/auto_fixing_parser_v2/outputs.txt", "a+") as f:
+            f.write(replies[0].replace("\n", "") + "\n")
+
         # create a corrupt json with 40% probability (for demo purposes)
         if random.randint(0, 100) < 40:
             replies[0] = "Corrupt Key" + replies[0]
