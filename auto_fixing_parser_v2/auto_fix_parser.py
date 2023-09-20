@@ -25,14 +25,16 @@ class OutputParser():
     def run(
             self,
             replies: List[str]):
-
+        # create a corrupt json with 50% probability (for demo purposes)
+        if random.randint(0, 100) < 50:
+            replies[0] = "Corrupt Key" + replies[0]
         try:
             json.loads(replies[0])
-            if random.randint(0, 100) > 50: raise ValueError()
-            logging.info(f"Valid LLM output: {replies}")
+
+            print(f"Valid LLM output: {replies}")
             return {"valid": replies, "invalid": None, "error_message": None}
         except ValueError as e:
-            logging.info(f"Invalid LLM output: {replies}")
+            print(f"Invalid LLM output: {replies}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
 #TODO let's eventually get rid of this component
