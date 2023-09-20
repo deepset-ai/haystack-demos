@@ -12,7 +12,7 @@ from haystack.preview import component
 from typing import Optional, List
 
 import pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 import logging
 
@@ -32,6 +32,8 @@ class CitiesData(BaseModel):
 schema = CitiesData.schema_json(indent=2)
 print(schema)
 
+print(str(CitiesData))
+
 @component
 class OutputParser():
     def __init__(self, pydantic_model:pydantic.BaseModel):
@@ -50,7 +52,7 @@ class OutputParser():
 
             logging.info(f"Valid LLM output: {replies}")
             return {"valid": replies, "invalid": None, "error_message": None}
-        except (ValueError, pydantic.error_wrappers.ValidationError) as e:
+        except (ValueError, ValidationError) as e:
             logging.info(f"Invalid LLM output: {replies}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
