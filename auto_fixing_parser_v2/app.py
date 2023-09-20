@@ -76,6 +76,7 @@ with st.sidebar:
         st.form_submit_button(label="Update Data Model", on_click=update_pipeline)
 
 st.markdown("# Extract City Data")
+st.image("assets/pipeline.png")
 st.text("Input a passage")
 st.text_area(label="Passage:", placeholder="<passage-to-extract-from>", key="input_passage")
 
