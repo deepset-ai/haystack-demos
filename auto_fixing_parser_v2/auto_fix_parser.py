@@ -34,6 +34,8 @@ print(schema)
 
 @component
 class OutputParser():
+    def __init__(self, pydantic_model:pydantic.BaseModel):
+        self.pydantic_model = pydantic_model
 
     @component.output_types(valid=List[str], invalid=Optional[List[str]], error_message=Optional[str])
     def run(
@@ -44,7 +46,7 @@ class OutputParser():
             replies[0] = "Corrupt Key" + replies[0]
         try:
             output_dict = json.loads(replies[0])
-            CitiesData.parse_obj(output_dict)
+            self.pydantic_model.parse_obj(output_dict)
 
             logging.info(f"Valid LLM output: {replies}")
             return {"valid": replies, "invalid": None, "error_message": None}
@@ -95,7 +97,7 @@ pipeline = Pipeline(max_loops_allowed=5)
 pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
 pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
 
-pipeline.add_component(instance=OutputParser(), name="output_parser")
+pipeline.add_component(instance=OutputParser(pydantic_model=CitiesData), name="output_parser")
 pipeline.add_component(instance=PromptBuilder(template=prompt_template_correction), name="prompt_correction")
 pipeline.add_component(instance=InputSwitch(), name="input_switch")
 pipeline.add_component(instance=FinalResult(), name="final_result")
