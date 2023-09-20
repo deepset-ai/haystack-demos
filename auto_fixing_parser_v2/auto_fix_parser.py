@@ -65,14 +65,12 @@ class FinalResult():
         return {"replies": replies}
 
 
+
 prompt_template = """
- {{query}}
- ##
- Passage:
- {{passage}}
- ##
- Schema:
+ Create a JSON object with information extracted from the following passage: {{passage}}. 
+ Follow this JSON schema, but only return the actual instances without the additional schema definition:"
  {{schema}}
+ Make sure your response is a dict and not a list.
  {% if replies %}
     We already got the following output: {{replies}}
     However, this doesn't comply with the format requirements from above. 
@@ -97,12 +95,8 @@ def create_pipeline():
 if __name__ == "__main__":
     pipeline = create_pipeline()
 
-    query = (
-        "Create a json file with the following fields extracted from the supplied passage: name, country, and population. None of the fields must be empty."
-    )
-
     passage = "Berlin is the capital of Germany. It has a population of 3,850,809"
     result = pipeline.run({
-        "prompt_builder": {"query": query, "schema": schema}
+        "prompt_builder": {"passage": passage, "schema": schema}
     })
     print(result)
