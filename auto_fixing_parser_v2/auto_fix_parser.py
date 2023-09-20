@@ -53,7 +53,7 @@ We already got the following output: {{replies}}
 However, this doesn't comply with the format requirements from above. Please correct the output and try again.
 """
 
-pipeline = Pipeline()
+pipeline = Pipeline(max_loops_allowed=5)
 pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
 pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
 
