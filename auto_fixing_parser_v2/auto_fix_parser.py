@@ -11,12 +11,26 @@ import random
 from haystack.preview import component
 from typing import Optional, List
 
+import pydantic
+from pydantic import BaseModel
+
 import logging
 
 logging.basicConfig()
 
 
 logging.getLogger().setLevel(logging.INFO)
+
+class City(BaseModel):
+    name: str
+    country: str
+    population: int
+
+class CitiesData(BaseModel):
+    cities: List[City]
+
+schema = CitiesData.schema_json(indent=2)
+print(schema)
 
 @component
 class OutputParser():
@@ -29,12 +43,13 @@ class OutputParser():
         if random.randint(0, 100) < 50:
             replies[0] = "Corrupt Key" + replies[0]
         try:
-            json.loads(replies[0])
+            output_dict = json.loads(replies[0])
+            CitiesData.parse_obj(output_dict)
 
-            print(f"Valid LLM output: {replies}")
+            logging.info(f"Valid LLM output: {replies}")
             return {"valid": replies, "invalid": None, "error_message": None}
-        except ValueError as e:
-            print(f"Invalid LLM output: {replies}")
+        except (ValueError, pydantic.error_wrappers.ValidationError) as e:
+            logging.info(f"Invalid LLM output: {replies}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
 #TODO let's eventually get rid of this component
@@ -62,10 +77,14 @@ class InputSwitch():
 
 prompt_template = """
  {{query}}
+ Schema:
+ {{schema}}
 """
 
 prompt_template_correction = """
 {{query}}
+Schema:
+{{schema}}
 We already got the following output: {{replies}}
 However, this doesn't comply with the JSON format requirements from above.
 Error message: {{error_message}}
@@ -95,8 +114,8 @@ pipeline.connect("prompt_correction", "input_switch.prompt2")
 query = (
     "Create a json file of the 3 biggest cities in the world with the following fields: name, country, and population. None of the fields must be empty.")
 result = pipeline.run({
-    "prompt_builder": {"query": query},
-    "prompt_correction": {"query": query},
+    "prompt_builder": {"query": query, "schema": schema},
+    "prompt_correction": {"query": query, "schema": schema},
 })
 
 print(result)
