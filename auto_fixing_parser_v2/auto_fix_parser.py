@@ -13,7 +13,7 @@ from typing import Optional, List
 
 import logging
 logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
+# logging.getLogger().setLevel(logging.DEBUG)
 
 # 1) what are requirements for a custom component?
 @component
@@ -30,6 +30,17 @@ class OutputParser():
         except ValueError as e:
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
+
+        
+@component
+class FinalResult():
+
+    @component.output_types(replies=List[str])
+    def run(
+        self,
+        replies: List[str]):
+        
+        return {"replies": replies}      
 
 @component
 class InputSwitch():
@@ -64,6 +75,7 @@ pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_AP
 pipeline.add_component(instance=OutputParser(), name="output_parser")
 pipeline.add_component(instance=PromptBuilder(template=prompt_template_correction), name="prompt_correction")
 pipeline.add_component(instance=InputSwitch(), name="input_switch")
+pipeline.add_component(instance=FinalResult(), name="final_result")
 
 pipeline.connect("prompt_builder", "input_switch.prompt1")
 pipeline.connect("input_switch", "llm.prompt")
@@ -71,6 +83,7 @@ pipeline.connect("input_switch", "llm.prompt")
 pipeline.connect("llm", "output_parser")
 pipeline.connect("output_parser.invalid", "prompt_correction.replies")
 pipeline.connect("output_parser.error_message", "prompt_correction.error_message")
+pipeline.connect("output_parser.valid", "final_result.replies")
 pipeline.connect("prompt_correction", "input_switch.prompt2")
 
 # 1) how to make this one optional depending on output? additional classification node needed?
