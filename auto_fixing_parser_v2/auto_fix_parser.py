@@ -78,22 +78,35 @@ prompt_template = """
   {% endif %}
 """
 
-def create_pipeline():
+def create_pipeline(pydantic_models_str:Optional[str]=None, pydantic_main_model_str:Optional[str]=None):
     pipeline = Pipeline(max_loops_allowed=5)
     pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
     pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
 
-    pipeline.add_component(instance=OutputParser(pydantic_model=CitiesData), name="output_parser")
+    # ugly and dangerous, but for demo purposes
+    if pydantic_models_str and pydantic_main_model_str:
+        d = dict(locals(), **globals())
+        exec(pydantic_models_str, d,d)
+        pipeline.add_component(instance=OutputParser(pydantic_model=eval(pydantic_main_model_str, d, d)), name="output_parser")
+        schema = eval(pydantic_main_model_str, d, d).schema_json(indent=2)
+
     pipeline.add_component(instance=FinalResult(), name="final_result")
 
     pipeline.connect("prompt_builder", "llm")
     pipeline.connect("llm", "output_parser")
     pipeline.connect("output_parser.invalid", "prompt_builder.replies")
     pipeline.connect("output_parser.valid", "final_result.replies")
-    return pipeline
+    return pipeline, schema
 
 if __name__ == "__main__":
-    pipeline = create_pipeline()
+    pipeline, schema = create_pipeline(pydantic_models_str="""
+class City(BaseModel):
+    name: str
+    country: str
+    population: int
+
+class CitiesData(BaseModel):
+    cities: List[City]""", pydantic_main_model_str="CitiesData")
 
     passage = "Berlin is the capital of Germany. It has a population of 3,850,809"
     result = pipeline.run({
