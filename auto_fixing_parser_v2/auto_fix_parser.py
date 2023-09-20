@@ -12,7 +12,7 @@ from haystack.preview import component
 from typing import Optional, List
 
 import pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 import logging
 
@@ -30,7 +30,9 @@ class CitiesData(BaseModel):
     cities: List[City]
 
 schema = CitiesData.schema_json(indent=2)
-#print(schema)
+print(schema)
+
+print(str(CitiesData))
 
 @component
 class OutputParser():
@@ -49,7 +51,7 @@ class OutputParser():
             self.pydantic_model.parse_obj(output_dict)
             logging.info(f"Valid LLM output: {replies[0]}")
             return {"valid": replies, "invalid": None, "error_message": None}
-        except (ValueError, pydantic.error_wrappers.ValidationError) as e:
+        except (ValueError, ValidationError) as e:
             logging.info(f"Invalid LLM output: {replies[0]}, error: {e}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
@@ -75,25 +77,30 @@ prompt_template = """
 """
 
 
-pipeline = Pipeline(max_loops_allowed=5)
-pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
-pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
+def create_pipeline():
 
-pipeline.add_component(instance=OutputParser(pydantic_model=CitiesData), name="output_parser")
-pipeline.add_component(instance=FinalResult(), name="final_result")
+    pipeline = Pipeline(max_loops_allowed=5)
+    pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
+    pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
 
-pipeline.connect("prompt_builder", "llm")
-pipeline.connect("llm", "output_parser")
-pipeline.connect("output_parser.invalid", "prompt_builder.replies")
+    pipeline.add_component(instance=OutputParser(pydantic_model=CitiesData), name="output_parser")
+    pipeline.add_component(instance=FinalResult(), name="final_result")
 
-pipeline.connect("output_parser.valid", "final_result.replies")
+    pipeline.connect("prompt_builder", "llm")
+    pipeline.connect("llm", "output_parser")
+    pipeline.connect("output_parser.invalid", "prompt_builder.replies")
+
+    pipeline.connect("output_parser.valid", "final_result.replies")
 
 
-## Run the Pipeline
-query = (
-    "Create a json file of the 3 biggest cities in the world with the following fields: name, country, and population. None of the fields must be empty.")
-result = pipeline.run({
-    "prompt_builder": {"query": query, "schema": schema},
-})
 
-print(result)
+if __name__ == "__main__":
+    pipeline = create_pipeline()
+    ## Run the Pipeline
+    query = (
+        "Create a json file of the 3 biggest cities in the world with the following fields: name, country, and population. None of the fields must be empty.")
+    result = pipeline.run({
+        "prompt_builder": {"query": query, "schema": schema}
+    })
+
+    print(result)
