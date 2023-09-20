@@ -1,4 +1,6 @@
+import json
 import os
+
 from haystack.preview import Pipeline, Document
 from haystack.preview.document_stores import MemoryDocumentStore
 from haystack.preview.components.retrievers import MemoryBM25Retriever
@@ -17,18 +19,17 @@ logging.getLogger().setLevel(logging.DEBUG)
 @component
 class OutputParser():
 
-    @component.output_types(valid=List[str], invalid=Optional[List[str]])
+    @component.output_types(valid=List[str], invalid=Optional[List[str]], error_message=Optional[str])
     def run(
         self,
         replies: List[str]):
 
-        if random.randint(0,100) > 1:
-            #raise Exception("Faile to parse input: the field xyz is missing")
-            print("Faile to parse input: the field xyz is missing")
-            return {"valid": None, "invalid": replies}
-        else:
-            print("Successfully parsed input")
-            return {"valid": replies, "invalid": None}
+        try:
+            json.loads(replies[0])
+            return {"valid": replies, "invalid": None, "error_message": None}
+        except ValueError as e:
+            return {"valid": None, "invalid": replies, "error_message": str(e)}
+
 
 @component
 class InputSwitch():
@@ -50,7 +51,9 @@ prompt_template = """
 prompt_template_correction="""
 {{query}}
 We already got the following output: {{replies}}
-However, this doesn't comply with the format requirements from above. Please correct the output and try again.
+However, this doesn't comply with the format requirements from above.
+Error message: {{error_message}}
+Please correct the output and try again.
 """
 
 pipeline = Pipeline(max_loops_allowed=5)
@@ -67,6 +70,7 @@ pipeline.connect("input_switch", "llm.prompt")
 
 pipeline.connect("llm", "output_parser")
 pipeline.connect("output_parser.invalid", "prompt_correction.replies")
+pipeline.connect("output_parser.error_message", "prompt_correction.error_message")
 pipeline.connect("prompt_correction", "input_switch.prompt2")
 
 # 1) how to make this one optional depending on output? additional classification node needed?
