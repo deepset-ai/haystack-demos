@@ -78,7 +78,6 @@ prompt_template = """
 
 
 def create_pipeline():
-
     pipeline = Pipeline(max_loops_allowed=5)
     pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
     pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
@@ -89,9 +88,8 @@ def create_pipeline():
     pipeline.connect("prompt_builder", "llm")
     pipeline.connect("llm", "output_parser")
     pipeline.connect("output_parser.invalid", "prompt_builder.replies")
-
     pipeline.connect("output_parser.valid", "final_result.replies")
-
+    return pipeline
 
 
 if __name__ == "__main__":
