@@ -12,7 +12,7 @@ from haystack.preview import component
 from typing import Optional, List
 
 import pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 import logging
 
@@ -32,47 +32,37 @@ class CitiesData(BaseModel):
 schema = CitiesData.schema_json(indent=2)
 print(schema)
 
+print(str(CitiesData))
+
 @component
 class OutputParser():
+    def __init__(self, pydantic_model:pydantic.BaseModel):
+        self.pydantic_model = pydantic_model
 
     @component.output_types(valid=List[str], invalid=Optional[List[str]], error_message=Optional[str])
     def run(
             self,
             replies: List[str]):
-        # create a corrupt json with 50% probability (for demo purposes)
-        if random.randint(0, 100) < 50:
+        # create a corrupt json with 40% probability (for demo purposes)
+        if random.randint(0, 100) < 40:
             replies[0] = "Corrupt Key" + replies[0]
         try:
             output_dict = json.loads(replies[0])
-            CitiesData.parse_obj(output_dict)
-
-            logging.info(f"Valid LLM output: {replies}")
+            self.pydantic_model.parse_obj(output_dict)
+            logging.info(f"Valid LLM output: {replies[0]}")
             return {"valid": replies, "invalid": None, "error_message": None}
-        except (ValueError, pydantic.error_wrappers.ValidationError) as e:
-            logging.info(f"Invalid LLM output: {replies}")
+        except (ValueError, ValidationError) as e:
+            logging.info(f"Invalid LLM output: {replies[0]}, error: {e}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
 
 #TODO let's eventually get rid of this component
 @component
 class FinalResult():
-
     @component.output_types(replies=List[str])
     def run(
             self,
             replies: List[str]):
         return {"replies": replies}
-
-#TODO let's eventually get rid of this component
-@component
-class InputSwitch():
-
-    @component.output_types(prompt=str)
-    def run(self, prompt1: Optional[str] = None, prompt2: Optional[str] = None):
-        if prompt1:
-            return {"prompt": prompt1}
-
-        if prompt2:
-            return {"prompt": prompt2}
 
 
 prompt_template = """
@@ -83,53 +73,36 @@ prompt_template = """
  ##
  Schema:
  {{schema}}
+ {% if replies %}
+    We already got the following output: {{replies}}
+    However, this doesn't comply with the format requirements from above. 
+    Correct the output and try again. Just return the corrected output wihtout any extra explanations.
+  {% endif %}
 """
 
-prompt_template_correction = """
-{{query}}
-##
-Passage:
-{{passage}}
-##
-Schema:
-{{schema}}
-We already got the following output: {{replies}}
-However, this doesn't comply with the JSON format requirements from above.
-Error message: {{error_message}}
-Correct the output and try again. Just return the JSON without any extra explanations.
-"""
+def create_pipeline():
+    pipeline = Pipeline(max_loops_allowed=5)
+    pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
+    pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
 
-pipeline = Pipeline(max_loops_allowed=5)
-pipeline.add_component(instance=PromptBuilder(template=prompt_template), name="prompt_builder")
-pipeline.add_component(instance=GPT35Generator(api_key=os.environ.get("OPENAI_API_KEY")), name="llm")
+    pipeline.add_component(instance=OutputParser(pydantic_model=CitiesData), name="output_parser")
+    pipeline.add_component(instance=FinalResult(), name="final_result")
 
-pipeline.add_component(instance=OutputParser(), name="output_parser")
-pipeline.add_component(instance=PromptBuilder(template=prompt_template_correction), name="prompt_correction")
-pipeline.add_component(instance=InputSwitch(), name="input_switch")
-pipeline.add_component(instance=FinalResult(), name="final_result")
+    pipeline.connect("prompt_builder", "llm")
+    pipeline.connect("llm", "output_parser")
+    pipeline.connect("output_parser.invalid", "prompt_builder.replies")
+    pipeline.connect("output_parser.valid", "final_result.replies")
+    return pipeline
 
-pipeline.connect("prompt_builder", "input_switch.prompt1")
-pipeline.connect("input_switch", "llm.prompt")
+if __name__ == "__main__":
+    pipeline = create_pipeline()
 
-pipeline.connect("llm", "output_parser")
-pipeline.connect("output_parser.invalid", "prompt_correction.replies")
-pipeline.connect("output_parser.error_message", "prompt_correction.error_message")
-pipeline.connect("output_parser.valid", "final_result.replies")
-pipeline.connect("prompt_correction", "input_switch.prompt2")
+    query = (
+        "Create a json file with the following fields extracted from the supplied passage: name, country, and population. None of the fields must be empty."
+    )
 
-
-## Run the Pipeline
-query = (
-    "Create a json file with the following fields extracted from the supplied passage: name, country, and population. None of the fields must be empty."
-)
-
-passage = "Berlin is the capital of Germany. It has a population of 3,850,809"
-# passage = "Berlin is the capital of Germany."
-
-
-result = pipeline.run({
-    "prompt_builder": {"query": query, "schema": schema, "passage": passage},
-    "prompt_correction": {"query": query, "schema": schema, "passage": passage},
-})
-
-print(result)
+    passage = "Berlin is the capital of Germany. It has a population of 3,850,809"
+    result = pipeline.run({
+        "prompt_builder": {"query": query, "schema": schema}
+    })
+    print(result)
