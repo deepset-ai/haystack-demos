@@ -5,6 +5,8 @@ import streamlit as st
 
 from auto_fix_parser import create_pipeline
 
+from config import INTERMEDIATE_OUTPUT_FILE
+
 
 st.set_page_config(page_title="Mine City", layout="wide", initial_sidebar_state="expanded")
 
@@ -42,8 +44,8 @@ if 'extraction_result' not in st.session_state:
 def extraction_handler():
     passage = st.session_state.input_passage
 
-    if os.path.exists("outputs.txt"):
-        os.remove("outputs.txt")
+    if os.path.exists(INTERMEDIATE_OUTPUT_FILE):
+        os.remove(INTERMEDIATE_OUTPUT_FILE)
 
     # Run Pipeline
     result = st.session_state.pipeline.run({
@@ -54,7 +56,7 @@ def extraction_handler():
 
     st.session_state.extraction_result = city
     intermediates = []
-    with open("outputs.txt") as f:
+    with open(INTERMEDIATE_OUTPUT_FILE) as f:
         intermediates = [l for l in f.readlines()]
     st.session_state.intermediates = intermediates
 
