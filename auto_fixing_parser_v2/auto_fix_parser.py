@@ -52,7 +52,7 @@ class OutputParser():
             output_dict = json.loads(replies[0])
             self.pydantic_model.parse_obj(output_dict)
             logging.info(f"Valid LLM output: {replies[0]}")
-            return {"valid": replies, "invalid": None, "error_message": None}
+            return {"valid": replies}
         except (ValueError, ValidationError) as e:
             logging.info(f"Invalid LLM output: {replies[0]}, error: {e}")
             return {"valid": None, "invalid": replies, "error_message": str(e)}
