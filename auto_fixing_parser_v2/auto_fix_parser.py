@@ -55,7 +55,7 @@ class OutputParser():
             return {"valid": replies}
         except (ValueError, ValidationError) as e:
             logging.info(f"Invalid LLM output: {replies[0]}, error: {e}")
-            return {"valid": None, "invalid": replies, "error_message": str(e)}
+            return {"invalid": replies, "error_message": str(e)}
 
 #TODO let's eventually get rid of this component
 @component
