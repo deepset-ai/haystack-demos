@@ -1,7 +1,7 @@
 import json
 import os
 
-from haystack.preview import Pipeline, Document
+from haystack.preview import Pipeline
 from haystack.preview.components.generators.openai import GPTGenerator
 from haystack.preview.components.builders.prompt_builder import PromptBuilder
 import random
@@ -12,13 +12,14 @@ import pydantic
 from pydantic import BaseModel, ValidationError
 
 import logging
+from termcolor import colored
 
 from config import INTERMEDIATE_OUTPUT_FILE
 
 logging.basicConfig()
 
 
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger("canals.pipeline.pipeline").setLevel(logging.DEBUG)
 
 class City(BaseModel):
     name: str
@@ -29,14 +30,15 @@ class CitiesData(BaseModel):
     cities: List[City]
 
 schema = CitiesData.schema_json(indent=2)
-print(schema)
+#print(schema)
 
-print(str(CitiesData))
+#print(str(CitiesData))
 
 @component
 class OutputParser():
     def __init__(self, pydantic_model:pydantic.BaseModel):
         self.pydantic_model = pydantic_model
+        self.iteration_counter = 0
 
     @component.output_types(valid=List[str], invalid=Optional[List[str]], error_message=Optional[str])
     def run(
@@ -45,37 +47,29 @@ class OutputParser():
         with open(INTERMEDIATE_OUTPUT_FILE, "a+") as f:
             f.write(replies[0].replace("\n", "") + "\n")
 
-        # create a corrupt json with 40% probability (for demo purposes)
-        if random.randint(0, 100) < 10:
-            replies[0] = "Corrupt Key" + replies[0]
+        # create a corrupt JSON with 40% probability by adding extra brackets (for demo purposes)
+        if random.randint(0, 100) < 30:
+            replies[0] = "{{" + replies[0]
         try:
             output_dict = json.loads(replies[0])
             self.pydantic_model.parse_obj(output_dict)
-            logging.info(f"Valid LLM output: {replies[0]}")
+            print(colored(text=f"OutputParser got valid output from LLM. No need for looping: {replies[0]}", color="green"))
             return {"valid": replies}
         except (ValueError, ValidationError) as e:
-            logging.info(f"Invalid LLM output: {replies[0]}, error: {e}")
+            print(colored(text=f"OutputParser got invalid output from LLM. Let's try again."
+                         f"Output from LLM \n: {replies[0]} \n"
+                         f"Error from OutputParser: {e}", color="red"))
             return {"invalid": replies, "error_message": str(e)}
-
-#TODO let's eventually get rid of this component
-@component
-class FinalResult():
-    @component.output_types(replies=List[str])
-    def run(
-            self,
-            replies: List[str]):
-        return {"replies": replies}
-
 
 
 prompt_template = """
- Create a JSON object with information extracted from the following passage: {{passage}}. 
- Follow this JSON schema, but only return the actual instances without the additional schema definition:"
+ Create a JSON object from the information present in this passage: {{passage}}.
+ Only use information that is present in the passage. Follow this JSON schema, but only return the actual instances without any additional schema definition:"
  {{schema}}
  Make sure your response is a dict and not a list.
- {% if replies %}
-    We already got the following output: {{replies}}
-    However, this doesn't comply with the format requirements from above. 
+ {% if replies and error_message %}
+    You already created the following output in a previous attempt: {{replies}}
+    However, this doesn't comply with the format requirements from above and triggered this Python exception: {{ error_message}}
     Correct the output and try again. Just return the corrected output without any extra explanations.
   {% endif %}
 """
@@ -92,12 +86,11 @@ def create_pipeline(pydantic_models_str:Optional[str]=None, pydantic_main_model_
         pipeline.add_component(instance=OutputParser(pydantic_model=eval(pydantic_main_model_str, d, d)), name="output_parser")
         schema = eval(pydantic_main_model_str, d, d).schema_json(indent=2)
 
-    pipeline.add_component(instance=FinalResult(), name="final_result")
-
     pipeline.connect("prompt_builder", "llm")
     pipeline.connect("llm", "output_parser")
     pipeline.connect("output_parser.invalid", "prompt_builder.replies")
-    pipeline.connect("output_parser.valid", "final_result.replies")
+    pipeline.connect("output_parser.error_message", "prompt_builder.error_message")
+
     return pipeline, schema
 
 if __name__ == "__main__":
