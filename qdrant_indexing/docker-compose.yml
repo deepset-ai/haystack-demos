@@ -18,6 +18,7 @@ services:
 
   hayhooks:
     build: .
+    container_name: hayhooks
     ports:
       - "1416:1416"
     volumes:
