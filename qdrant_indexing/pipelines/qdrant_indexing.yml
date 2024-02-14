@@ -1,0 +1,72 @@
+components:
+  converter:
+    init_parameters:
+      encoding: utf-8
+    type: haystack.components.converters.txt.TextFileToDocument
+  embedder:
+    init_parameters:
+      batch_size: 32
+      device: cpu
+      embedding_separator: '
+
+        '
+      meta_fields_to_embed: []
+      model: sentence-transformers/all-mpnet-base-v2
+      normalize_embeddings: false
+      prefix: ''
+      progress_bar: true
+      suffix: ''
+      token:
+        env_vars:
+        - HF_API_TOKEN
+        strict: false
+        type: env_var
+    type: haystack.components.embedders.sentence_transformers_document_embedder.SentenceTransformersDocumentEmbedder
+  writer:
+    init_parameters:
+      document_store:
+        init_parameters:
+          api_key: null
+          content_field: content
+          duplicate_documents: overwrite
+          embedding_dim: 768
+          embedding_field: embedding
+          grpc_port: 6334
+          hnsw_config: null
+          host: qdrant
+          https: null
+          index: Document
+          init_from: null
+          location: null
+          metadata: {}
+          name_field: name
+          on_disk_payload: null
+          optimizers_config: null
+          path: null
+          port: 6333
+          prefer_grpc: false
+          prefix: null
+          progress_bar: true
+          quantization_config: null
+          recreate_index: false
+          replication_factor: null
+          return_embedding: false
+          scroll_size: 10000
+          shard_number: null
+          similarity: cosine
+          timeout: null
+          url: null
+          wait_result_from_api: true
+          wal_config: null
+          write_batch_size: 100
+          write_consistency_factor: null
+        type: haystack_integrations.document_stores.qdrant.document_store.QdrantDocumentStore
+      policy: NONE
+    type: haystack.components.writers.document_writer.DocumentWriter
+connections:
+- receiver: embedder.documents
+  sender: converter.documents
+- receiver: writer.documents
+  sender: embedder.documents
+max_loops_allowed: 100
+metadata: {}
