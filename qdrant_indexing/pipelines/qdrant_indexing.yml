@@ -6,7 +6,9 @@ components:
   embedder:
     init_parameters:
       batch_size: 32
-      device: cpu
+      device:
+        device: cpu
+        type: single
       embedding_separator: '
 
         '

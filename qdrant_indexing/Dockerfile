@@ -1,4 +1,4 @@
-FROM deepset/haystack:base-v2.0.0-beta.7
+FROM deepset/haystack:base-v2.1.1
 
 EXPOSE 1416
 
