@@ -21,7 +21,7 @@ This repository contains **fully functional applications** that demonstrate how 
 ### Other cool demos 😎
 | Name                                                                                            | Use case           | Available online                                                  |
 | ----------------------------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------- |
-| [🧑‍🏫 AutoQuizzer](https://github.com/anakin87/autoquizzer)                                       | Content Generation | [Link](https://huggingface.co/spaces/Tuana/what-would-mother-say) |
+| [🧑‍🏫 AutoQuizzer](https://github.com/anakin87/autoquizzer)                                       | Content Generation | [Link](https://huggingface.co/spaces/deepset/autoquizzer) |
 | [Hacker News Post Summaries 🧡](https://github.com/TuanaCelik/hackernews-summaries)             | Summarization      | [Link](https://huggingface.co/spaces/Tuana/hackernews-summaries)  |
 | [Captionate 📸](https://huggingface.co/spaces/bilgeyucel/captionate/tree/main)                  | Image-to-Text      | [Link](https://huggingface.co/spaces/bilgeyucel/captionate)       |
 | [Fact Checking 🎸 Rocks!](https://github.com/anakin87/fact-checking-rocks)                      | Entailment Check   | [Link](https://huggingface.co/spaces/anakin87/fact-checking-rocks)|
