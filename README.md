@@ -8,6 +8,8 @@
 
 This repository contains **fully functional applications** that demonstrate how to use Haystack for implementing a range of NLP use cases, from **advanced LLM-driven solutions** to **practical natural language processing tasks**. Some of these applications are available online, while all of them can be run locally. For more details, visit [Haystack Demos](https://haystack.deepset.ai/overview/demo).
 
+To build your own Haystack demo, you can use the [👾 Template for Haystack Apps with Streamlit](https://github.com/deepset-ai/haystack-streamlit-app).
+
 ## Demo apps
 
 ### In this repository
