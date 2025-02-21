@@ -34,7 +34,7 @@ HAYHOOKS_SHOW_TRACEBACKS=false  # Set to true to show errors
 ```
 🔗 **More details on configuration:** [Hayhooks Documentation](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#configuration)
 
-### 4️⃣ Start Hayhooks 
+### 4️⃣ Start the Hayhooks Server 
 ```sh
 hayhooks run
 ```
@@ -100,7 +100,7 @@ docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway \
 
 Once running, open: [http://localhost:3000/](http://localhost:3000/)
 
-### 2️⃣ Connect Open WebUI to the Chat API
+### 2️⃣ Connect Open WebUI to the REST API
 1. Go to **Settings** → **Admin Settings** → **Connections**
 2. Add `http://host.docker.internal:1416` to OpenAI API connections, fill in a placeholder as "Key" 
 3. Select a pipeline as the "model" for chat
