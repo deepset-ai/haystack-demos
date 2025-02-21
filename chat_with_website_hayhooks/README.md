@@ -4,8 +4,6 @@ This demo shows how to build a chatbot that interacts with website content using
 
 ![Chat Completion Streaming Example](chat-completion-streaming.gif)
 
----
-
 ## 🚀 Run the Demo
 
 ### 1️⃣ Clone the Repository
@@ -87,8 +85,6 @@ Response:
 {"result":"The founders of Safe Superintelligence Inc. (SSI) are Ilya Sutskever, Daniel Gross, and Daniel Levy."}
 ```
 
----
-
 ## 🖥️ Connect to Open WebUI
 
 ### 1️⃣ Start Open WebUI
@@ -114,10 +110,8 @@ Once running, open: [http://localhost:3000/](http://localhost:3000/)
 ### 3️⃣ Start Chatting in Open WebUI
 ![Chat Completion Streaming Example](chat-completion-streaming.gif)
 
----
-
 ## 🔧 Customizing the Chatbot
-Modify `pipeline.yml` to create pipelines for different use cases:
+Modify `chat_with_website.yml` and `chat_with_website_streaming.yml` files to update pipelines for different use cases:
 - Check out [Haystack Tutorials](https://haystack.deepset.ai/tutorials) for ideas.
 - Explore [Haystack Cookbook](https://haystack.deepset.ai/cookbook) for advanced recipes.
 - Learn about [different deployment options](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#deploy-a-pipeline).
