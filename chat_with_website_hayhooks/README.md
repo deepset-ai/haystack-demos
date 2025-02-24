@@ -101,8 +101,8 @@ docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway \
 Once running, open: [http://localhost:3000/](http://localhost:3000/)
 
 ### 2️⃣ Connect Open WebUI to the REST API
-1. Go to **Settings** → **Admin Settings** → **Connections**
-2. Add `http://host.docker.internal:1416` to OpenAI API connections, fill in a placeholder as "Key" 
+1. Go to **Settings** → **Admin Settings** → **Connections** in the Open WebUI
+2. Add `http://host.docker.internal:1416` to OpenAI API connections, fill in a placeholder string as "Key" 
 3. Select a pipeline as the "model" for chat
 
 ![Add Connection](add-ui-connection.png)
