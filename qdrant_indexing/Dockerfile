@@ -1,7 +1,5 @@
-FROM deepset/haystack:base-v2.1.1
+FROM deepset/hayhooks:v0.6.0
 
-EXPOSE 1416
+RUN pip install qdrant-haystack sentence-transformers
 
-RUN pip install qdrant-haystack hayhooks sentence-transformers
-
-CMD ["hayhooks", "run", "--pipelines-dir", "/pipelines", "--host", "0.0.0.0"]
+CMD ["hayhooks", "run", "--host", "0.0.0.0"]
