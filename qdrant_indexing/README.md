@@ -91,7 +91,7 @@ Then you can run:
 hayhooks pipeline run qdrant_indexing --file test_file.txt
 ```
 
-This will index the text in the file `test_file.txt` into Qdrant
+This will run the `qdrant_indexing` pipeline with `test_file.txt` and index the text into Qdrant
 
 ## Query the indexed text using Hayhooks API
 
