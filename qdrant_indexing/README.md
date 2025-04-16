@@ -20,7 +20,7 @@ We have implemented two [pipeline wrappers](https://github.com/deepset-ai/hayhoo
 - `qdrant_indexing`: This pipeline is used to **index** documents into Qdrant.
 - `qdrant_query`: This pipeline is used to **query** documents from Qdrant.
 
-They will be automatically loaded by Hayhooks when it starts.
+They will be automatically loaded by Hayhooks when the server starts.
 
 ## Build and run the containers
 
