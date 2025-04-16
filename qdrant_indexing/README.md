@@ -34,7 +34,7 @@ docker-compose up
 docker-compose up -d
 ```
 
-Eventually you should have two containers running, check it out by running:
+Eventually, you should have two containers running: `qdrant` for the local Qdrant instance and `hayhooks`. Check it out by running:
 
 ```bash
 docker-compose ps
