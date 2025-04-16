@@ -79,7 +79,7 @@ Upon a successful request, you should get the following JSON response:
 
 ## Index some text using Hayhooks CLI
 
-You'll need to install `hayhooks` first:
+To use the Hayhooks CLI, you need to install `hayhooks` first:
 
 ```bash
 pip install hayhooks
