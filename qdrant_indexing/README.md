@@ -40,7 +40,7 @@ Eventually you should have two containers running, check it out by running:
 docker-compose ps
 ```
 
-Check if [Hayhooks](https://github.com/deepset-ai/hayhooks) is running by going to [http://localhost:1416/docs](http://localhost:1416/docs#) in your browser.
+Check if the Hayhooks server is running by going to [http://localhost:1416/docs](http://localhost:1416/docs#) in your browser.
 
 You should also see the documentation for the two pipelines under the `pipelines` section of docs:
 
