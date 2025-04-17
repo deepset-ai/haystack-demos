@@ -17,12 +17,17 @@ services:
       - ./qdrant_data:/qdrant_data
 
   hayhooks:
-    build: .
+    build: . # Build from local Dockerfile
     container_name: hayhooks
     ports:
       - "1416:1416"
     volumes:
       - ./pipelines:/pipelines
+    environment:
+      - HAYHOOKS_PIPELINES_DIR=/pipelines
+      - LOG=DEBUG
+    depends_on:
+      - qdrant
 
 configs:
   qdrant_config:
