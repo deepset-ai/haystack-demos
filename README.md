@@ -13,12 +13,13 @@ To build your own Haystack demo, you can use the [👾 Template for Haystack App
 ## Demo apps
 
 ### In this repository
-| Name                                        | Use case           | Available online                         | Haystack Version |
-| ------------------------------------------- | ------------------ | ---------------------------------------- | -----------------|
-| [Explore the world](./explore_the_world/)   | Question Answering | :x:                                      | 1.0              |
-| [Air-gapped rest_api](./airgapped-rest_api) | Deployment         | :x:                                      | 1.0              |
-| [Healthcare](./healthcare)                  | Question Answering | :x:                                      | 1.0              |
-| [Qdrant Indexing](./qdrant_indexing)        | Question Answering | :x:                                      | 2.0              |
+| Name                                              | Use case           | Available online                         | Haystack Version |
+| ------------------------------------------------- | ------------------ | ---------------------------------------- | -----------------|
+| [Explore the world](./explore_the_world/)         | Question Answering | :x:                                      | 1.0              |
+| [Air-gapped rest_api](./airgapped-rest_api)       | Deployment         | :x:                                      | 1.0              |
+| [Healthcare](./healthcare)                        | Question Answering | :x:                                      | 1.0              |
+| [Qdrant Indexing](./qdrant_indexing)              | Question Answering | :x:                                      | 2.0              |
+| [Chat with Website](./chat_with_website_hayhooks) | Deployment         | :x:                                      | 2.0              |
 
 ### Other cool demos 😎
 | Name                                                                                            | Use case           | Available online                                                  |
