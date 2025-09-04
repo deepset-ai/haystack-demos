@@ -20,6 +20,7 @@ To build your own Haystack demo, you can use the [👾 Template for Haystack App
 | [Healthcare](./healthcare)                        | Question Answering | :x:                                      | 1.0              |
 | [Qdrant Indexing](./qdrant_indexing)              | Question Answering | :x:                                      | 2.0              |
 | [Chat with Website](./chat_with_website_hayhooks) | Deployment         | :x:                                      | 2.0              |
+| [Browser Agent](./browser_agent)                  | Agent Deployment   | :x:                                      | 2.0              |
 
 ### Other cool demos 😎
 | Name                                                                                            | Use case           | Available online                                                  |
