@@ -1,8 +1,8 @@
-# Browser Agent
+# 🕵️🌐  Browser Agent
 
 This demo shows how to deploy a Browser Agent with [Docker Compose](https://docs.docker.com/compose/).
 
-Here you can see it in action, while it finds public transportation travel options from Paris to Berlin.
+Watch it in action as it finds public transportation options from Paris to Berlin:
 
 ![Browser Agent](video.gif)
 
@@ -29,7 +29,7 @@ docker-compose up
 
 
 ### 4️⃣ Open the Open WebUI User Interface
-Open your browser to [http://localhost:3000/](http://localhost:3000/) and start talking with the Agent.
+Open your browser to [http://localhost:3000/](http://localhost:3000/) and start interacting with the Agent.
 
 
 
@@ -38,44 +38,47 @@ The Agent is built with Haystack, Google Gemini 2.5 Flash model, and the Playwri
 Take a look at [this notebook](https://haystack.deepset.ai/cookbook/browser_agents) to better understand how the Agent works.
 
 The Docker compose stack includes three containers:
-- [Hayhooks](https://github.com/deepset-ai/hayhooks) to serve the Haystack Agent
-- [Playwright MCP server](https://github.com/microsoft/playwright-mcp) for browser automation
-- [Open WebUI](https://github.com/open-webui/open-webui) for the user interface.
+- [Hayhooks](https://github.com/deepset-ai/hayhooks) - serves the Haystack Agent.
+- [Playwright MCP server](https://github.com/microsoft/playwright-mcp) - handles browser automation.
+- [Open WebUI](https://github.com/open-webui/open-webui) - provides the user interface.
 
-Repository Structure
-- `docker-compose.yml`: Docker compose file to run the containers.
+**Repository Structure**
+- `docker-compose.yml`: Docker compose configuration.
 - `Dockerfile`: Dockerfile to build the Hayhooks container with additional dependencies (`mcp-haystack` and `google-genai-haystack`).
-- `pipelines/browser_agent/pipeline_wrapper.py`: the pipeline wrapper for the Browser Agent.
+- `pipelines/browser_agent/pipeline_wrapper.py`: pipeline wrapper for the Browser Agent.
 
 
-## Technical Details
+## ⚙️ Technical Details
 
 ### Hayhooks
-- The current implementation is not built for multi-turn conversations, so with each message you'll give a new task
-  to the Agent, restarting from scratch.
+- The current implementation **does not support multi-turn conversations**. Each message starts a new Agent task.
 
-- The agent is exposed as a REST API endpoint, by defining a Hayhooks pipeline wrapper. Read about it in [Hayhooks README](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#deploy-an-agent).
+- The agent is exposed as a **REST API endpoint** via a Hayhooks pipeline wrapper. [Read more](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#deploy-an-agent).
 
-- The pipeline Wrapper for the Agent uses an `async_streaming_generator` to stream OpenAI-compatible outputs as soon as
-they are generated. Read about it in [Hayhooks README](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#streaming-responses-in-openai-compatible-endpoints).
+- Streaming responses are suppored via Hayhooks's `async_streaming_generator`. [Read more](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#streaming-responses-in-openai-compatible-endpoints).
 
-- The pipeline wrapper sends events to Open WebUI to update the user interface and improve the user experience. Read about it in [Hayhooks README](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#sending-open-webui-events-enhancing-the-user-experience).
+- Hayhooks sends events to Open WebUI to update the user interface in real time. [Read more](https://github.com/deepset-ai/hayhooks?tab=readme-ov-file#sending-open-webui-events-enhancing-the-user-experience).
 
 ### Docker Compose
 
-The Docker compose file is fully commented and ready for customization.
+- The Docker compose file is fully commented and ready for customization.
 
-The Hayhooks container need the Playwright MCP server to be running and ready to accept requests via Streamable HTTP transport; similarly, Open WebUI needs the Hayhooks container to be ready to accept requests from Open WebUI. This is done by using the `depends_on` directive in the Docker compose file.
+- Container dependencies:
+    - The Hayhooks container requires the Playwright MCP server to be running and ready to accept requests via Streamable HTTP transport.
+
+    - Similarly, Open WebUI depends on the Hayhooks container to be running.
+
+    - These dependencies are managed using the `depends_on` directive in Docker Compose.
 
 ## 🔧 Customization
 
-There are several things you can customize and you can also take this repo as a starting point for deploying an Agent.
+There are several things you can customize, and you can also take this repository as a starting point for deploying a Haystack Agent.
 
 
 ### Browser Agent
 
 #### Tools
-The Agent uses several tools from Playwright MCP server:
+The Agent uses several Playwright MCP server tools:
 - `browser_navigate`
 - `browser_snapshot`
 - `browser_click`
@@ -83,23 +86,19 @@ The Agent uses several tools from Playwright MCP server:
 - `browser_navigate_back`
 - `browser_wait_for`
 
-When working with tools for LLMs, it's a good practice to only select the ones you actually need. This helps avoid confusing the LLM with too many options.
+⚠️ Tip: Only enable the tools you actually need to avoid confusing the LLM.
 
-In case you need different or more tools, read the [Playwright MCP server documentation](https://github.com/microsoft/playwright-mcp?tab=readme-ov-file#tools) to discover all the available tools.
+For more tools, see the [Playwright MCP server documentation](https://github.com/microsoft/playwright-mcp?tab=readme-ov-file#tools).
 
 #### Models
-Most recent closed models with a large context length should work well. I have tried
-some of them.
-The browser automation tool returns very long responses, so the context length is an important requirement.
 
-Also recent open models with a large context length should work. The best idea is to serve them in a performant infrastucture
-or via providers like Groq. When you try using open models running on a standard machine (e.g. via Ollama), the problem is that the context length is
-reduced and the Agent is not able to respond in a meaningful way.
+- For browser automation tasks which generate long outputs, use models with **large context length**.
+
+- Closed-source models generally work best, but open models with sufficient context length are also viable. Serving them on performant infrastructure or via providers (e.g., Groq) is recommended.
+
+- Open models running on standard machines (e.g. via Ollama) usually reduce context length, limiting the Agent's effectiveness.
 
 ### Open WebUI
-The user interface is highly customizable and you can do a lot of things using environment variables.
-Read more about it in the [Open WebUI documentation](https://docs.openwebui.com/getting-started/env-configuration/).
-
-Of course, if you deploy the Agent in the real world, you will have to setup an authentication mechanism.
-Read more about it in the [Open WebUI documentation](https://docs.openwebui.com/features/sso/).
+- The UI is highly configurable via **environment variables**. [Documentation](https://docs.openwebui.com/getting-started/env-configuration/)
+- For production deployments, setup authentication. [Documentation](https://docs.openwebui.com/features/sso/)
 

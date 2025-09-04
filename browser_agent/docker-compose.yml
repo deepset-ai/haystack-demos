@@ -78,7 +78,7 @@ services:
             "content": "1. Visit Hugging Face Spaces, search the Space named exactly \"FLUX.1 [schnell]\" and enter it.\n2. Craft a detailed, descriptive prompt using your language skills to depict: \"my holiday on Lake Como\".\n3. Use this prompt to generate an image within the Space.\n4. After prompting, wait 5 seconds to allow the image to fully generate. Repeat until the image is generated.\n5. Your final response must contain only the direct link to the generated image — no additional text."
           },
           {
-            "title": ["📅 Who was born on this day?"],
+            "title": ["📅 Who was born on this day?", ""],
             "content": "I was born on November 10th. Find five notable people born on the same day using Wikipedia." 
           }
         ]
