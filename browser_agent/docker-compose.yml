@@ -1,18 +1,18 @@
 services:
 
   playwright-mcp:
-    image: mcr.microsoft.com/playwright/mcp
+    image: mcr.microsoft.com/playwright/mcp:latest
     expose: ["8931"]
     init: true
     # This image is normally intended to be launched and controlled by a client via stdio,
     # where the MCP server runs as a subprocess.
-    # Here we override the entrypoint to run it as a standalone MCP server, with Streamable HTTP transport.
-    entrypoint: ["npx", "@playwright/mcp@latest", "--headless", "--browser", "chromium", "--port", "8931"]
+    # Here we override the entrypoint to run it as a standalone MCP server, with Streamable HTTP transport.   
+    entrypoint: ["npx", "-y", "@playwright/mcp@latest", "--headless", "--browser", "chromium", "--port", "8931"]
     # Check if the MCP server is listening on port 8931 using a simple TCP connection.
     # Exits 0 if the port is open (healthy), or 1 if the connection fails (unhealthy).
-    # We use Node because other commonly used commands are not available in this image.
+    # We use this syntax because other commonly used commands are not available in this image.
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"require('net').connect({host:'localhost',port:8931},()=>process.exit(0)).on('error',()=>process.exit(1))\""]
+      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/8931'"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,48 +34,57 @@ services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:v0.6.24
     container_name: open-webui
-    # volumes:
-    #   - open-webui:/app/backend/data
+    volumes:
+      - ./open-webui:/app/backend/data
     ports:
       - 3000:8080
     environment:
-      GLOBAL_LOG_LEVEL: "DEBUG"
+      # Environment Variable Configuration: https://docs.openwebui.com/getting-started/env-configuration/
       # Here we make the default OPENAI_API_BASE_URL point to hayhooks...
       OPENAI_API_BASE_URL: http://hayhooks:1416
       # ...and we use a dummy key for the OpenAI API key (not needed)
       OPENAI_API_KEY: "dummy"
-      # Other settings
-      ENABLE_TAGS_GENERATION: "True"
-      ENABLE_TITLE_GENERATION: "True"
+      # Disables Open WebUI's network connections for update checks and automatic model downloads.
+      OFFLINE_MODE: "True"
+      ENABLE_VERSION_UPDATE_CHECK: "False"
+      # Other settings - If you enable some of these features, expect repeated calls to our model
+      ENABLE_TAGS_GENERATION: "False"
+      ENABLE_TITLE_GENERATION: "False"
       ENABLE_FOLLOW_UP_GENERATION: "False"
       ENABLE_EVALUATION_ARENA_MODELS: "False"
       ENABLE_AUTOCOMPLETE_GENERATION: "False"
       ENABLE_CODE_EXECUTION: "False"
       ENABLE_OLLAMA_API: "False"
       ENABLE_DIRECT_CONNECTIONS: "False"
-      # Auth
+      # Auth - more information here: https://docs.openwebui.com/features/sso/
       WEBUI_AUTH: "False"
       DEFAULT_USER_ROLE: user
-      # Disables Open WebUI's network connections for update checks and automatic model downloads.
-      OFFLINE_MODE: "True"
       DEFAULT_PROMPT_SUGGESTIONS: |-
         [
           {
-            "title": ["3-day in Japan", "Street Food + Culture"],
-            "content": "Plan a 3-day trip to Japan focusing on street food and culture. I prefer boutique hotels, have a moderate budget, and will be traveling by train. I want to visit Tokyo, Kyoto, and Osaka."
+            "title": ["🗞️🗞️ Find similar news stories", "Compare BBC and NBC"],
+            "content": "1. Visit www.nbcnews.com\n2. Visit www.bbc.com\n3. Identify news stories that appear on both sites.\n4. Your final response must contain only a Markdown table listing the shared news stories and their respective links from each site."
           },
           {
-            "title": ["4-day in California", "National Parks + Coast"],
-            "content": "Plan a 4-day California road trip focusing on national parks and coastal drives. I prefer cozy motels and cabins, have a moderate budget, and will be traveling by rental car. I want to visit San Francisco, Big Sur, Santa Barbara, Joshua Tree, and Yosemite."
+            "title": ["👨🏻‍💻 Find information about a GitHub contributor", "Top trending repo author"],
+            "content": "I'm trying to find how hard I have to work to get a repo in github.com/trending.\nCan you navigate to the profile for the top author of the top trending repo,\nand give me their total number of contributions over the last year?"
           },
           {
-            "title": ["Weekend in Barcelona", "Architecture + Tapas"],
-            "content": "Plan a 2-day weekend trip to Barcelona focusing on architecture and tapas. I prefer central 4-star hotels, have a moderate budget, and will be traveling by public transport. I want to visit Sagrada Familia, Park Guell, the Gothic Quarter, and Barceloneta beach."
+            "title": ["🚂 🚌 Find public transportation travel options", "Paris to Berlin"],
+            "content": "1. Using Google Maps, find the next 3 available public transportation travel options from Paris to Berlin departing today.\n2. The goal is creating a markdown table containing Route Description, Department hour, Arrival hour, Duration and Transfers.\n3. Emojis in headers of the table.\n4. Include a final link to the Google Map search outside table"
+          },
+          {
+            "title": ["🖼️ 🤗 Image generation via Hugging Face spaces", "Prompt refinement + Flux 1 Schnell"],
+            "content": "1. Visit Hugging Face Spaces, search the Space named exactly \"FLUX.1 [schnell]\" and enter it.\n2. Craft a detailed, descriptive prompt using your language skills to depict: \"my holiday on Lake Como\".\n3. Use this prompt to generate an image within the Space.\n4. After prompting, wait 5 seconds to allow the image to fully generate. Repeat until the image is generated.\n5. Your final response must contain only the direct link to the generated image — no additional text."
+          },
+          {
+            "title": ["📅 Who was born on this day?"],
+            "content": "I was born on November 10th. Find five notable people born on the same day using Wikipedia." 
           }
         ]
     depends_on:
       - hayhooks
-    restart: unless-stopped   
+    restart: unless-stopped
 
 
   

@@ -82,7 +82,8 @@ class PipelineWrapper(BasePipelineWrapper):
             create_details_tag(
                 tool_name=tool_name,
                 summary=f"Tool call result for {tool_name}",
-                content=f"```\nArguments:\n{arguments}\n\nResponse:\n{result}\n```",
+                # truncate the response to avoid "Chunk too big" errors from Open WebUI
+                content=f"```\nArguments:\n{arguments}\n\nResponse:\n{result[:200]}...\n```",
             ),
         ]
 
