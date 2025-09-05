@@ -6,6 +6,8 @@ Watch it in action as it finds public transportation options from Paris to Berli
 
 ![Browser Agent](video.gif)
 
+> **Note**: The browser runs in Docker in **headless mode** - you won't see a browser window opening on your screen, but the agent can still interact with websites. See [Running the Browser in headed mode](#running-the-browser-in-headed-mode).
+
 
 ## 🚀 Quickstart
 
@@ -102,3 +104,18 @@ For more tools, see the [Playwright MCP server documentation](https://github.com
 - The UI is highly configurable via **environment variables**. [Documentation](https://docs.openwebui.com/getting-started/env-configuration/)
 - For production deployments, setup authentication. [Documentation](https://docs.openwebui.com/features/sso/)
 
+### Running the Browser in headed mode
+
+The demo focuses on Docker Compose deployment, so the headless browser in the MCP Docker container is the default and supported setup.
+
+To experiment locally and see the **Agent interact with websites**, refer to [this notebook](https://haystack.deepset.ai/cookbook/browser_agents)
+and replace the `server_info` definition as follows:
+
+```python
+server_info = StdioServerInfo(command="npx", args=["@playwright/mcp@latest"])
+```
+
+This lets you observe the Agent performing actions, for example navigating to Hugging Face Spaces and generating 
+an image using an optimized prompt.
+
+![Agent with Headed browser](headed_browser.gif)
