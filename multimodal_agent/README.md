@@ -75,7 +75,7 @@ Swagger docs: [http://localhost:1416/docs](http://localhost:1416/docs)
 Test with `curl`:
 ```sh
 curl -X 'POST' \
-  'http://localhost:1416/agent-with-tool/run' \
+  'http://localhost:1416/vision-enabled-agent/run' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
