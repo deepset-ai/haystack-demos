@@ -16,7 +16,7 @@ source .venv/bin/activate
 ```
 Install Haystack, Hayhooks and other required packages:
 ```sh
-pip install haystack-ai python-weather hayhooks google-genai-haystack 
+pip install haystack-ai python-weather hayhooks
 ```
 
 ### 3️⃣ Configure Environment Variables
