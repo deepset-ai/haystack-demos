@@ -1,5 +1,5 @@
 # 🖼️ Multimodal Haystack Agent
-This demo shows how to build a multimodal agent that can interact with images and PDFs using [Haystack](https://haystack.deepset.ai/), [Hayhooks](https://github.com/deepset-ai/hayhooks), and [Open WebUI](https://docs.openwebui.com/).
+This demo shows how to build a multimodal agent that can interact with images using [Haystack](https://haystack.deepset.ai/), [Hayhooks](https://github.com/deepset-ai/hayhooks), and [Open WebUI](https://docs.openwebui.com/).
 
 ## 🚀 Run the Demo
 
@@ -16,7 +16,7 @@ source .venv/bin/activate
 ```
 Install Haystack, Hayhooks and other required packages:
 ```sh
-pip install haystack-ai python-weather hayhooks
+pip install haystack-ai hayhooks python-weather 
 ```
 
 ### 3️⃣ Configure Environment Variables
@@ -45,13 +45,10 @@ No pipelines currently deployed
 ```
 
 ### 5️⃣ Deploy the Agent
-Choose the agent that you want to deploy and use the corresponding path:
-```sh
-hayhooks pipeline deploy-files -n basic-agent multimodal_agent/basic-agent
-```
+Deploy the agent by giving a name and the path:
 
 ```sh
-hayhooks pipeline deploy-files -n agent-with-tool multimodal_agent/agent-with-tool
+hayhooks pipeline deploy-files -n vision-enabled-agent multimodal_agent/vision-enabled-agent
 ```
 If deployment is successful, you'll see output like this when you run `hayhooks status` again:
 ```sh
@@ -59,17 +56,17 @@ If deployment is successful, you'll see output like this when you run `hayhooks 
 │ Hayhooks server is up and running at: http://localhost:1416 │
 ╰─────────────────────────────────────────────────────────────╯
 
-        Deployed Pipelines         
-╭───┬─────────────────┬───────────╮
-│ № │ Pipeline Name   │ Status    │
-├───┼─────────────────┼───────────┤
-│ 1 │ agent-with-tool │ 🟢 Active │
-╰───┴─────────────────┴───────────╯
+           Deployed Pipelines           
+╭───┬──────────────────────┬───────────╮
+│ № │ Pipeline Name        │ Status    │
+├───┼──────────────────────┼───────────┤
+│ 1 │ vision-enabled-agent │ 🟢 Active │
+╰───┴──────────────────────┴───────────╯
 ```
 
 After making changes on the `pipeline_wrapper.py` files, you can redeploy the same agent with the `--overwrite` command without restarting the Hayhooks server.
 ```sh
-hayhooks pipeline deploy-files -n agent-with-tool --overwrite multimodal_agent/agent-with-tool
+hayhooks pipeline deploy-files -n vision-enabled-agent --overwrite multimodal_agent/vision-enabled-agent
 ```
 
 ### 6️⃣ Test the API
@@ -82,7 +79,7 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "query": "What's the weather like in this place?",
+  "query": "What is the weather like in this place?",
   "image_path": "multimodal_agent/map.png"
 }'
 ```

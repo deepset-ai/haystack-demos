@@ -47,15 +47,16 @@ class PipelineWrapper(BasePipelineWrapper):
         result = self.agent.run([ChatMessage.from_user(content_parts=content_parts)], streaming_callback=print_streaming_chunk)
         return result["last_message"].text
     
+    # Open WebUI hooks
     def on_tool_call_start(
         self, tool_name: str, arguments: dict, id: str
     ) -> List[OpenWebUIEvent]:
         return [
-            # create_status_event(description=f"Tool call started: {tool_name}"),
-            # create_notification_event(
-            #     notification_type="info",
-            #     content=f"Tool call started: {tool_name}",
-            # )
+            create_status_event(description=f"Tool call started: {tool_name}"),
+            create_notification_event(
+                notification_type="info",
+                content=f"Tool call started: {tool_name}",
+            )
         ]
     
     def on_tool_call_end(
@@ -66,19 +67,19 @@ class PipelineWrapper(BasePipelineWrapper):
         error: bool,  # noqa: ARG002
     ) -> list[OpenWebUIEvent]:
         return [
-            # create_status_event(
-            #     description=f"Tool call ended: {tool_name} with arguments:{arguments}",
-            #     done=True,
-            # ),
-            # create_notification_event(
-            #     notification_type="success",
-            #     content=f"Tool call ended: {tool_name}",
-            # ),
-            # create_details_tag(
-            #     tool_name=tool_name,
-            #     summary=f"Tool call result for {tool_name}",
-            #     content=(f"```\nArguments:\n{arguments}\n\nResponse:\n{result}\n```"),
-            # ),
+            create_status_event(
+                description=f"Tool call ended: {tool_name} with arguments: {arguments}",
+                done=True,
+            ),
+            create_notification_event(
+                notification_type="success",
+                content=f"Tool call ended: {tool_name}",
+            ),
+            create_details_tag(
+                tool_name=tool_name,
+                summary=f"Tool call result for {tool_name}",
+                content=(f"```\nArguments:\n{arguments}\n\nResponse:\n{result}\n```"),
+            ),
         ]
     
     # handles OpenAI-compatible chat completion requests asynchronously for Open WebUI
