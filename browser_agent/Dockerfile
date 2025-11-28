@@ -1,4 +1,4 @@
-FROM deepset/hayhooks:v0.10.1
+FROM deepset/hayhooks:v1.7.0
 
 RUN pip --no-cache-dir install google-genai-haystack mcp-haystack 
 

@@ -4,10 +4,9 @@ services:
     image: mcr.microsoft.com/playwright/mcp:latest
     expose: ["8931"]
     init: true
-    # This image is normally intended to be launched and controlled by a client via stdio,
-    # where the MCP server runs as a subprocess.
-    # Here we override the entrypoint to run it as a standalone MCP server, with Streamable HTTP transport.   
-    entrypoint: ["npx", "-y", "@playwright/mcp@latest", "--headless", "--browser", "chromium", "--port", "8931"]
+    # See https://github.com/microsoft/playwright-mcp?tab=readme-ov-file#standalone-mcp-server (Docker section)
+    entrypoint: ["node"]
+    command: ["cli.js", "--headless", "--browser", "chromium", "--no-sandbox", "--port", "8931"]
     # Check if the MCP server is listening on port 8931 using a simple TCP connection.
     # Exits 0 if the port is open (healthy), or 1 if the connection fails (unhealthy).
     # We use this syntax because other commonly used commands are not available in this image.
