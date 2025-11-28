@@ -4,6 +4,7 @@ services:
     image: mcr.microsoft.com/playwright/mcp:latest
     expose: ["8931"]
     init: true
+    # See https://github.com/microsoft/playwright-mcp?tab=readme-ov-file#standalone-mcp-server (Docker section)
     entrypoint: ["node"]
     command: ["cli.js", "--headless", "--browser", "chromium", "--no-sandbox", "--port", "8931"]
     # Check if the MCP server is listening on port 8931 using a simple TCP connection.
