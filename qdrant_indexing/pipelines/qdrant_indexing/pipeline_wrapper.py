@@ -4,7 +4,7 @@ from fastapi import UploadFile
 from hayhooks import BasePipelineWrapper, log
 from haystack import Pipeline
 from haystack.components.converters import TextFileToDocument
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
+from haystack_integrations.components.embedders.sentence_transformers import SentenceTransformersDocumentEmbedder
 from haystack.components.writers import DocumentWriter
 from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 

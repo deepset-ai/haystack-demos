@@ -1,6 +1,6 @@
 from haystack import Pipeline
 from hayhooks import BasePipelineWrapper, log
-from haystack.components.embedders import SentenceTransformersTextEmbedder
+from haystack_integrations.components.embedders.sentence_transformers import SentenceTransformersTextEmbedder
 from haystack_integrations.components.retrievers.qdrant import QdrantEmbeddingRetriever
 from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 

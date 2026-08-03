@@ -1,7 +1,7 @@
 # Haystack Demos
 
 <div align="center">
-  <a href="https://haystack.deepset.ai/"><img src="https://github.com/deepset-ai/haystack/blob/main/images/banner.png" alt="Green logo of a stylized white 'H' with the text 'Haystack, by deepset.' Abstract green and yellow diagrams in the background."></a>
+  <a href="https://haystack.deepset.ai/"><img src="https://github.com/deepset-ai/haystack/blob/main/images/banner.png" alt="Haystack 3.0 - open-source AI orchestration for production-grade agents"></a>
 </div>
 
 [**Haystack**](https://github.com/deepset-ai/haystack) is an open source framework by [**deepset**](https://deepset.ai) for building production-ready **agentic, compound AI systems** like **advanced retrieval-augmented generative pipelines** and **multi-agent systems**.
@@ -21,12 +21,13 @@ To build your own Haystack demo, you can use the [👾 Template for Haystack App
 | [Multimodal Agent](./multimodal_agent)            | Multimodal Agent   |
 
 ### Other cool demos 😎
-| Name                                                                                            | Use case           | Available online                                                  |
-| ----------------------------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------- |
-| [🧑‍🏫 AutoQuizzer](https://github.com/anakin87/autoquizzer)                                       | Content Generation | [Link](https://huggingface.co/spaces/deepset/autoquizzer) |
-| Itinerary Agent ✈️                                                                              | Multi-Agent System | [Link](https://itinerary-agent.deepset.ai/)               |
-| [Hacker News Post Summaries 🧡](https://github.com/TuanaCelik/hackernews-summaries)             | Summarization      | [Link](https://huggingface.co/spaces/Tuana/hackernews-summaries)  |
-| [Captionate 📸](https://huggingface.co/spaces/bilgeyucel/captionate/tree/main)                  | Image-to-Text      | [Link](https://huggingface.co/spaces/bilgeyucel/captionate)       |
-| [Fact Checking 🎸 Rocks!](https://github.com/anakin87/fact-checking-rocks)                      | Entailment Check   | [Link](https://huggingface.co/spaces/anakin87/fact-checking-rocks)|
-| [Should I Follow on Mastodon? 🐤](https://github.com/TuanaCelik/should-i-follow)                | Content Generation | [Link](https://huggingface.co/spaces/deepset/should-i-follow)     |
-| [Search All Docs 🔎](https://github.com/silvanocerza/search-all-the-docs)                       | RAG                | [Link](https://huggingface.co/spaces/deepset/search-all-the-docs) |
+| Name                                                                                                                | Use case           | Available online                                                   |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------|
+| [✅ Human-in-the-Loop with Open WebUI, Redis, Hayhooks](https://github.com/deepset-ai/hitl-hayhooks-redis-openwebui) | Agent with HITL    | —                                                                   |
+| [🧑‍🏫 AutoQuizzer](https://github.com/anakin87/autoquizzer)                                                          | Content Generation | [Link](https://huggingface.co/spaces/deepset/autoquizzer)          |
+| [Itinerary Agent ✈️](https://github.com/deepset-ai/itinerary-agent)                                                 | Multi-Agent System | [Link](https://itinerary-agent.deepset.ai/)                        |
+| [Hacker News Post Summaries 🧡](https://github.com/TuanaCelik/hackernews-summaries)                                  | Summarization      | [Link](https://huggingface.co/spaces/Tuana/hackernews-summaries)   |
+| [Captionate 📸](https://huggingface.co/spaces/bilgeyucel/captionate/tree/main)                                       | Image-to-Text      | [Link](https://huggingface.co/spaces/bilgeyucel/captionate)        |
+| [Fact Checking 🎸 Rocks!](https://github.com/anakin87/fact-checking-rocks)                                           | Entailment Check   | [Link](https://huggingface.co/spaces/anakin87/fact-checking-rocks) |
+| [Should I Follow on Mastodon? 🐤](https://github.com/TuanaCelik/should-i-follow)                                     | Content Generation | [Link](https://huggingface.co/spaces/deepset/should-i-follow)      |
+| [Search All Docs 🔎](https://github.com/silvanocerza/search-all-the-docs)                                            | RAG                | [Link](https://huggingface.co/spaces/deepset/search-all-the-docs)  |
