@@ -24,11 +24,11 @@ components:
       generation_kwargs: {}
       model: gpt-4o-mini
       streaming_callback: null
-      system_prompt: null
-    type: haystack.components.generators.openai.OpenAIGenerator
+    type: haystack.components.generators.chat.openai.OpenAIChatGenerator
 
   prompt:
     init_parameters:
+      required_variables: null
       template: |
         "According to the contents of this website:
         {% for document in documents %}
@@ -44,7 +44,7 @@ connections:
     sender: fetcher.streams
   - receiver: prompt.documents
     sender: converter.documents
-  - receiver: llm.prompt
+  - receiver: llm.messages
     sender: prompt.prompt
 
 metadata: {}
