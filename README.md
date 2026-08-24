@@ -23,9 +23,9 @@ To build your own Haystack demo, you can use the [👾 Template for Haystack App
 ### Other cool demos 😎
 | Name                                                                                                                | Use case           | Available online                                                   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------|
-| [✅ Human-in-the-Loop with Open WebUI, Redis, Hayhooks](https://github.com/deepset-ai/hitl-hayhooks-redis-openwebui) | Agent with HITL    | —                                                                   |
+| [Human-in-the-Loop with Open WebUI, Redis, Hayhooks 🔄](https://github.com/deepset-ai/hitl-hayhooks-redis-openwebui) | Agent with HITL    | —                                                                   |
 | [🧑‍🏫 AutoQuizzer](https://github.com/anakin87/autoquizzer)                                                          | Content Generation | [Link](https://huggingface.co/spaces/deepset/autoquizzer)          |
-| [Itinerary Agent ✈️](https://github.com/deepset-ai/itinerary-agent)                                                 | Multi-Agent System | [Link](https://itinerary-agent.deepset.ai/)                        |
+| [Itinerary Agent ✈️](https://github.com/deepset-ai/itinerary-agent)                                                 | Multi-Agent System | -                                                                     |
 | [Hacker News Post Summaries 🧡](https://github.com/TuanaCelik/hackernews-summaries)                                  | Summarization      | [Link](https://huggingface.co/spaces/Tuana/hackernews-summaries)   |
 | [Captionate 📸](https://huggingface.co/spaces/bilgeyucel/captionate/tree/main)                                       | Image-to-Text      | [Link](https://huggingface.co/spaces/bilgeyucel/captionate)        |
 | [Fact Checking 🎸 Rocks!](https://github.com/anakin87/fact-checking-rocks)                                           | Entailment Check   | [Link](https://huggingface.co/spaces/anakin87/fact-checking-rocks) |
